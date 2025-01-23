@@ -1,0 +1,26 @@
+import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
+
+export class SqsClient {
+  private client: SQSClient;
+
+  constructor() {
+    this.client = new SQSClient({
+      region: process.env.AWS_REGION || 'us-east-1',
+    });
+  }
+
+  async sendMessage(queueUrl: string, message: any): Promise<void> {
+    const command = new SendMessageCommand({
+      QueueUrl: queueUrl,
+      MessageBody: JSON.stringify(message),
+    });
+
+    try {
+      await this.client.send(command);
+      console.log(`Message sent to queue: ${queueUrl}`);
+    } catch (error) {
+      console.error(`Failed to send message to queue: ${error.message}`);
+      throw error;
+    }
+  }
+}
