@@ -1,6 +1,8 @@
 import { GLOBAL_PREFIX, SWAGGER_PATH } from '@infrastructure/config/constants';
 import { setupSwagger } from '@infrastructure/config/swagger.config';
 import { setupValidationPipe } from '@infrastructure/config/validation-pipe.config';
+import { HttpExceptionFilter } from '@infrastructure/entrypoint/filters/http-exception.filter';
+import { NotFoundDomainExceptionFilter } from '@infrastructure/entrypoint/filters/not-found.filter';
 import { ConsoleLogger, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './infrastructure/modules/app.module';
@@ -16,6 +18,9 @@ async function bootstrap() {
   });
   app.setGlobalPrefix(GLOBAL_PREFIX);
   app.enableCors();
+
+  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new NotFoundDomainExceptionFilter());
 
   setupValidationPipe(app);
   setupSwagger(app);
