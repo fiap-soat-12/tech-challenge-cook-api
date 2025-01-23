@@ -1,4 +1,4 @@
-import { PageCollection } from '@application/models/page-collection';
+import { PageCollection } from '@domain/models/page-collection';
 import { DatabaseConnection } from '@domain/repositories/database-connection';
 import { Pool } from 'pg';
 
