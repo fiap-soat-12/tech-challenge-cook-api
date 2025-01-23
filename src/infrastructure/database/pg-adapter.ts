@@ -2,6 +2,24 @@ import { PageCollection } from '@domain/models/page-collection';
 import { DatabaseConnection } from '@domain/repositories/database-connection';
 import { Pool } from 'pg';
 
+interface FieldDef {
+  name: string;
+  tableID: number;
+  columnID: number;
+  dataTypeID: number; // OID do tipo de dado (ex.: 23 para integer, 1043 para varchar)
+  dataTypeSize: number; // Tamanho do tipo de dado (ex.: -1 para varchar/text, 4 para int4)
+  dataTypeModifier: number; // Modificador do tipo (ex.: precisão de campos numéricos)
+  format: string; // Formato dos dados retornados (ex.: "text", "binary")
+}
+
+interface QueryResult<T = any> {
+  command: string; // O comando SQL executado, ex.: "SELECT", "INSERT"
+  rowCount: number; // Número de linhas afetadas
+  oid: number; // ID do objeto (para comandos de inserção)
+  rows: T[]; // Os dados retornados na consulta
+  fields: FieldDef[]; // Metadados das colunas
+}
+
 export class PgAdapter implements DatabaseConnection {
   private static instance: PgAdapter;
   private readonly pool: Pool;
@@ -50,12 +68,15 @@ export class PgAdapter implements DatabaseConnection {
   async query<T, P extends any[] = any[]>(
     statement: string,
     params?: P,
-  ): Promise<T> {
+  ): Promise<T[]> {
     try {
       console.log(`Executing Query: ${statement}`);
       console.log(`With Parameters: ${JSON.stringify(params)}`);
 
-      const result = await this.pool.query<T, P>(statement, params);
+      const result: QueryResult<T> = await this.pool.query<T, P>(
+        statement,
+        params,
+      );
 
       if (!result?.rowCount) {
         return null;
@@ -88,21 +109,20 @@ export class PgAdapter implements DatabaseConnection {
       const offset = page * size;
 
       const dataQuery = `${statement} LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-      const databaseResponse = await this.pool.query<T>(dataQuery, [
-        ...params,
-        size,
-        offset,
-      ]);
+      const databaseResponse: QueryResult<T> = await this.pool.query<T>(
+        dataQuery,
+        [...params, size, offset],
+      );
 
       if (!databaseResponse || !databaseResponse?.rowCount) {
         return new PageCollection();
       }
 
       const countQuery = `SELECT COUNT(*) FROM (${statement}) AS count_query`;
-      const countResult = await this.pool.query<{ count: number }>(
-        countQuery,
-        params,
-      );
+      const countResult: QueryResult<{ count: string }> =
+        await this.pool.query<{
+          count: number;
+        }>(countQuery, params);
 
       const totalElements = parseInt(countResult.rows[0]?.count || '0', 10);
 
