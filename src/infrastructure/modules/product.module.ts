@@ -18,6 +18,7 @@ import { Module } from '@nestjs/common';
 import { createWithLogger } from '../config/create-with-logger';
 import { DatabaseModule } from './database.module';
 import { LoggerModule } from './logger.module';
+import { MessagingModule } from './messaging.module';
 
 @Module({
   controllers: [
@@ -35,7 +36,6 @@ import { LoggerModule } from './logger.module';
         new ProductPersistence(dbConnection, logger),
       inject: ['DatabaseConnection', 'Logger'],
     },
-
     // Casos de Uso
     {
       provide: CreateProductUseCase,
@@ -74,6 +74,6 @@ import { LoggerModule } from './logger.module';
       inject: ['ProductRepository', 'Logger'],
     },
   ],
-  imports: [DatabaseModule, LoggerModule],
+  imports: [DatabaseModule, LoggerModule, MessagingModule],
 })
 export class ProductModule {}
