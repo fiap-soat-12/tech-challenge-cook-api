@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - '4566:4566' # Porta principal do LocalStack
+      - '4571-4599:4571-4599' # Outras portas de serviços
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - EDGE_PORT=4566
+      - SERVICES=sqs
+      - DEBUG=1
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
