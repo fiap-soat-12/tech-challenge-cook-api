@@ -12,7 +12,7 @@ export class ProductToCreatePublisher
     private readonly sqsClient: SqsClient,
     private readonly logger: Logger,
   ) {
-    this.queueUrl = process.env.PRODUCT_CREATED_QUEUE_URL || '';
+    this.queueUrl = process.env.ORDER_PRODUCT_CREATE_QUEUE || '';
     if (!this.queueUrl) {
       throw new Error('Queue URL for Product Created not configured');
     }

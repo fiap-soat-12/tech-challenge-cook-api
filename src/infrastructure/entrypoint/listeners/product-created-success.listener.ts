@@ -12,7 +12,7 @@ export class ProductCreatedSuccessListener {
     private readonly sqsClient: SQSClient,
     private readonly logger: Logger,
   ) {
-    this.queueUrl = process.env.PRODUCT_CREATED_SUCCESS_QUEUE_URL || '';
+    this.queueUrl = process.env.ORDER_PRODUCT_CREATE_ACCEPT_QUEUE || '';
     if (!this.queueUrl) {
       throw new Error('Queue URL for Product Created Success not configured');
     }
