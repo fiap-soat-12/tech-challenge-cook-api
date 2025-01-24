@@ -1,4 +1,5 @@
 import { Logger } from '@application/interfaces/logger.interface';
+import { CreateProductInOrderUseCase } from '@application/usecases/order/send/create-product-in-order.usecase';
 import { CreateProductUseCase } from '@application/usecases/products/create-product/create-product.usecase';
 import { DeleteProductUseCase } from '@application/usecases/products/delete-product/delete-product.usecase';
 import { GetProductByIdUseCase } from '@application/usecases/products/get-product-by-id/get-product-by-id.usecase';
@@ -13,6 +14,7 @@ import { GetProductByIdController } from '@infrastructure/entrypoint/controllers
 import { GetProductPaginatedController } from '@infrastructure/entrypoint/controllers/get-product-paginated/get-product-paginated.controller';
 import { GetProductController } from '@infrastructure/entrypoint/controllers/get-product/get-product.controller';
 import { UpdateProductController } from '@infrastructure/entrypoint/controllers/update-product/update-product.controller';
+import { ProductToCreatePublisher } from '@infrastructure/entrypoint/publishers/product-to-create.publisher';
 import { ProductPersistence } from '@infrastructure/repositories/product.persistence';
 import { Module } from '@nestjs/common';
 import { createWithLogger } from '../config/create-with-logger';
@@ -38,10 +40,19 @@ import { MessagingModule } from './messaging.module';
     },
     // Casos de Uso
     {
+      provide: CreateProductInOrderUseCase,
+      useFactory: (sqs: ProductToCreatePublisher, logger: Logger) =>
+        createWithLogger(CreateProductInOrderUseCase, [sqs], logger),
+      inject: ['ProductToCreatePublisher', 'Logger'],
+    },
+    {
       provide: CreateProductUseCase,
-      useFactory: (repo: ProductRepository, logger: Logger) =>
-        createWithLogger(CreateProductUseCase, [repo], logger),
-      inject: ['ProductRepository', 'Logger'],
+      useFactory: (
+        repo: ProductRepository,
+        queue: CreateProductInOrderUseCase,
+        logger: Logger,
+      ) => createWithLogger(CreateProductUseCase, [repo, queue], logger),
+      inject: ['ProductRepository', CreateProductInOrderUseCase, 'Logger'],
     },
     {
       provide: UpdateProductUseCase,

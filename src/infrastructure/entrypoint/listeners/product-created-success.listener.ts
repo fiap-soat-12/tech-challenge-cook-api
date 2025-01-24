@@ -14,7 +14,7 @@ export class ProductCreatedSuccessListener {
   ) {
     this.queueUrl = process.env.ORDER_PRODUCT_CREATE_ACCEPT_QUEUE || '';
     if (!this.queueUrl) {
-      throw new Error('Queue URL for Product Created Success not configured');
+      // throw new Error('Queue URL for Product Created Success not configured');
     }
   }
 

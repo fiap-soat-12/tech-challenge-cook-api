@@ -4,10 +4,14 @@ import { SqsClient } from '@infrastructure/config/sqs.config';
 import { ProductCreatedSuccessListener } from '@infrastructure/entrypoint/listeners/product-created-success.listener';
 import { ProductToCreatePublisher } from '@infrastructure/entrypoint/publishers/product-to-create.publisher';
 import { Module } from '@nestjs/common';
+import { LoggerModule } from './logger.module';
 
 @Module({
   providers: [
-    SqsClient,
+    {
+      provide: 'SqsClient',
+      useClass: SqsClient,
+    },
     {
       provide: 'ProductToCreatePublisher',
       useFactory: (sqsClient: SqsClient, logger: Logger) =>
@@ -21,6 +25,7 @@ import { Module } from '@nestjs/common';
       inject: ['SqsClient', 'Logger'],
     },
   ],
-  exports: [ProductToCreatePublisher, ProductCreatedSuccessListener],
+  exports: ['ProductToCreatePublisher', 'ProductCreatedSuccessListener'],
+  imports: [LoggerModule],
 })
 export class MessagingModule {}
