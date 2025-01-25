@@ -43,7 +43,7 @@ class ProductPrice {
 }
 
 class ProductStatus {
-  private static readonly allowedStatuses = ['ACTIVE', 'INACTIVE'];
+  private static readonly allowedStatuses = Object.values(ProductStatus);
 
   private constructor(private readonly value: string) {}
 
@@ -60,12 +60,7 @@ class ProductStatus {
 }
 
 class ProductCategory {
-  private static readonly allowedCategories = [
-    'MAIN_COURSE',
-    'SIDE_DISH',
-    'DRINK',
-    'DESSERT',
-  ];
+  private static readonly allowedCategories = Object.values(ProductCategory);
 
   private constructor(private readonly value: string) {}
 

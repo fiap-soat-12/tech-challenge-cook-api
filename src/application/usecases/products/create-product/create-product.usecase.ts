@@ -1,4 +1,5 @@
 import { CreateProductDto } from '@application/dto/create-product.dto';
+import { ProductStatusEnum } from '@application/enums/product-status.enum';
 import { Logger } from '@application/interfaces/logger.interface';
 import { CreateProductInOrderUseCase } from '@application/usecases/order/send/create-product-in-order.usecase';
 import { Product } from '@domain/entities/product';
@@ -18,7 +19,7 @@ export class CreateProductUseCase {
         description: dto.description,
         name: dto.name,
         price: dto.price,
-        status: 'ACTIVE',
+        status: ProductStatusEnum.ACTIVE,
       });
 
       this.logger.log('Create product start:');

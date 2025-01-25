@@ -1,3 +1,4 @@
+import { ProductCategoryEnum } from '@application/enums/product-category.enum';
 import { ProductCategoryType } from '@application/types/product-category.type';
 import { ApiProperty } from '@nestjs/swagger';
 import {
@@ -20,7 +21,7 @@ export class CreateProductRequest {
     example: 'MAIN_COURSE',
     description: 'The category of the product',
   })
-  @IsEnum(['MAIN_COURSE', 'SIDE_DISH', 'DRINK', 'DESSERT'], {
+  @IsEnum(ProductCategoryEnum, {
     message: 'category must be one of MAIN_COURSE, SIDE_DISH, DRINK, DESSERT',
   })
   category: ProductCategoryType;

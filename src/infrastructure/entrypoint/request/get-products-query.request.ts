@@ -1,13 +1,14 @@
+import { ProductCategoryEnum } from '@application/enums/product-category.enum';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional } from 'class-validator';
 
 export class GetProductsQueryRequest {
-  @IsEnum(['MAIN_COURSE', 'SIDE_DISH', 'DRINK', 'DESSERT'], {
+  @IsEnum(ProductCategoryEnum, {
     message: 'Invalid category',
   })
   @ApiPropertyOptional({
     description: 'Category of the product',
-    enum: ['MAIN_COURSE', 'SIDE_DISH', 'DRINK', 'DESSERT'],
+    enum: ProductCategoryEnum,
   })
   category: string;
 
