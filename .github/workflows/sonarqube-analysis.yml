@@ -1,0 +1,51 @@
+name: SonarQube NodeJS Analysis
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sonar:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout do código
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Instalar dependências do Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      # 3. Executar testes e gerar cobertura
+      - name: Run tests and generate coverage
+        run: npm run test -- --coverage
+
+      # 4. Generate HTML reports
+      - name: Generate HTML reports
+        run: |
+          mkdir -p ./reports
+          npm run test -- --coverage --reporters=jest-html-reporter
+
+      # 5. Upload reports
+      - name: Upload coverage and test reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: |
+            ./coverage
+            ./reports
+
+      # 6. Executar o SonarScanner
+      - name: Run SonarQube Scanner
+        env:
+          SONAR_HOST_URL: http://your-sonarqube-server:9000
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npx sonar-scanner
