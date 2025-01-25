@@ -5,8 +5,8 @@ interface ProductProps {
   price: number;
   description: string;
   status: string;
-  created_at?: Date;
-  updated_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export class Product {
@@ -16,8 +16,8 @@ export class Product {
   public readonly price: ProductPrice;
   public readonly description: string;
   public readonly status: ProductStatus;
-  public readonly created_at: Date;
-  public readonly updated_at: Date;
+  public readonly createdAt: Date;
+  public readonly updatedAt: Date;
 
   constructor({ category, price, status, ...rest }: ProductProps) {
     Object.assign(this, rest);

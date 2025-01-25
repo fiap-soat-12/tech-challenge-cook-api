@@ -23,7 +23,6 @@ export class UpdateProductUseCase {
       const updatedProduct = new Product({
         ...existingProduct,
         ...dto,
-        updated_at: new Date(),
       });
 
       await this.productRepository.update(updatedProduct);
