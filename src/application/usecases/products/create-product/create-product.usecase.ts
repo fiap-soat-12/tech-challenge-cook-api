@@ -14,6 +14,8 @@ export class CreateProductUseCase {
 
   async execute(dto: CreateProductDto): Promise<Product> {
     try {
+      this.logger.log('Create product start:');
+
       const product = new Product({
         category: dto.category,
         description: dto.description,
@@ -22,13 +24,11 @@ export class CreateProductUseCase {
         status: ProductStatusEnum.ACTIVE,
       });
 
-      this.logger.log('Create product start:');
+      const productCreated = await this.productRepository.create(product);
 
-      await this.productRepository.create(product);
+      this.createProductInOrderUseCase.execute(productCreated);
 
-      this.createProductInOrderUseCase.execute(product);
-
-      return product;
+      return productCreated;
     } catch (error) {
       this.logger.error(`Create product failed`, error);
 
