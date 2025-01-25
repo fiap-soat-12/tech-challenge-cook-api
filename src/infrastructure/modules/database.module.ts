@@ -1,5 +1,6 @@
 import { DatabaseConnection } from '@domain/interface/database-connection.interface';
 import { PgAdapter } from '@infrastructure/database/pg-adapter';
+import { DatabaseAcceptEnum } from '@infrastructure/enums/database-accepted.enum';
 import { Global, Inject, Module, OnModuleInit } from '@nestjs/common';
 
 @Global()
@@ -8,14 +9,12 @@ import { Global, Inject, Module, OnModuleInit } from '@nestjs/common';
     {
       provide: 'DatabaseConnection',
       useFactory: (): DatabaseConnection => {
-        const dbType = process.env.DB_TYPE || 'postgres';
+        const dbType = process.env.DB_TYPE || 'postgresql';
 
-        switch (dbType) {
-          case 'postgres':
-            return PgAdapter.getInstance();
-          default:
-            throw new Error(`Unsupported DB_TYPE: ${dbType}`);
+        if (dbType === DatabaseAcceptEnum.POSTGRESQL) {
+          return PgAdapter.getInstance();
         }
+        throw new Error(`Unsupported DB_TYPE: ${dbType}`);
       },
     },
   ],
