@@ -21,8 +21,12 @@ export class UpdateProductUseCase {
       }
 
       const updatedProduct = new Product({
-        ...existingProduct,
-        ...dto,
+        description: dto.description || existingProduct.description,
+        id: existingProduct.id,
+        name: dto.name || existingProduct.name,
+        price: dto.price || existingProduct.price.getValue(),
+        status: existingProduct.status.getValue(),
+        category: dto.category || existingProduct.category.getValue(),
       });
 
       await this.productRepository.update(updatedProduct);
