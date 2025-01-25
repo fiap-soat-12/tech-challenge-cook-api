@@ -23,6 +23,7 @@ export class CreateProductController {
   ): Promise<GetProductResponse> {
     const product = await this.createUserUseCase.execute(request);
     const response: GetProductResponse = new GetProductResponse({
+      id: product.id,
       category: product.category.getValue(),
       description: product.description,
       name: product.name,
