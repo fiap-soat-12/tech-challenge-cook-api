@@ -114,7 +114,7 @@ export class PgAdapter implements DatabaseConnection {
         [...params, size, offset],
       );
 
-      if (!databaseResponse || !databaseResponse?.rowCount) {
+      if (!databaseResponse?.rowCount) {
         return new PageCollection();
       }
 

@@ -1,7 +1,7 @@
 import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 
 export class SqsClient {
-  private client: SQSClient;
+  private readonly client: SQSClient;
 
   constructor() {
     this.client = new SQSClient({

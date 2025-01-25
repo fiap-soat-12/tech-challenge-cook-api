@@ -33,7 +33,7 @@ export class ProductCreatedSuccessListener {
           this.logger.log(`Message received: ${message.Body}`);
 
           // Aqui você processa a mensagem
-          const product = JSON.parse(message.Body!);
+          const product = JSON.parse(message.Body);
           this.logger.log(`Processing product: ${JSON.stringify(product)}`);
 
           // Delete a mensagem após processar
