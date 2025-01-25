@@ -6,6 +6,5 @@ export class UpdateProductDto {
     public readonly category: ProductCategoryType,
     public readonly price: number,
     public readonly description: string,
-    public readonly status: string,
   ) {}
 }
