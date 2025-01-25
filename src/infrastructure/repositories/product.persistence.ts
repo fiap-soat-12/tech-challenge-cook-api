@@ -1,8 +1,8 @@
 import { Logger } from '@application/interfaces/logger.interface';
 import { Product } from '@domain/entities/product';
 import { ProductPersistenceError } from '@domain/exceptions/product-persistence-error.exception';
+import { DatabaseConnection } from '@domain/interface/database-connection.interface';
 import { PageCollection } from '@domain/models/page-collection';
-import { DatabaseConnection } from '@domain/repositories/database-connection';
 import { ProductRepository } from '@domain/repositories/product.repository';
 
 export class ProductPersistence implements ProductRepository {

@@ -6,7 +6,7 @@ import { GetProductByIdUseCase } from '@application/usecases/products/get-produc
 import { GetProductPaginatedUseCase } from '@application/usecases/products/get-product-paginated/get-product-paginated.usecase';
 import { GetProductUseCase } from '@application/usecases/products/get-product/get-product.usecase';
 import { UpdateProductUseCase } from '@application/usecases/products/update-product/update-product.usecase';
-import { DatabaseConnection } from '@domain/repositories/database-connection';
+import { DatabaseConnection } from '@domain/interface/database-connection.interface';
 import { ProductRepository } from '@domain/repositories/product.repository';
 import { CreateProductController } from '@infrastructure/entrypoint/controllers/create-product/create-product.controller';
 import { DeleteProductController } from '@infrastructure/entrypoint/controllers/delete-product/delete-product.controller';

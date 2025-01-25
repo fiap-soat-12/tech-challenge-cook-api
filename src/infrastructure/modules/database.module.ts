@@ -1,4 +1,4 @@
-import { DatabaseConnection } from '@domain/repositories/database-connection';
+import { DatabaseConnection } from '@domain/interface/database-connection.interface';
 import { PgAdapter } from '@infrastructure/database/pg-adapter';
 import { Global, Inject, Module, OnModuleInit } from '@nestjs/common';
 

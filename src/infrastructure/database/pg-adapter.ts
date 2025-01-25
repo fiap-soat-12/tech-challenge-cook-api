@@ -1,5 +1,5 @@
+import { DatabaseConnection } from '@domain/interface/database-connection.interface';
 import { PageCollection } from '@domain/models/page-collection';
-import { DatabaseConnection } from '@domain/repositories/database-connection';
 import { Pool } from 'pg';
 
 interface FieldDef {
