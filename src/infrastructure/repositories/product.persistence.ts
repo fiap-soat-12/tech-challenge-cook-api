@@ -4,6 +4,7 @@ import { ProductPersistenceError } from '@domain/exceptions/product-persistence-
 import { DatabaseConnection } from '@domain/interface/database-connection.interface';
 import { PageCollection } from '@domain/models/page-collection';
 import { ProductRepository } from '@domain/repositories/product.repository';
+import { ProductEntity } from './entities/product.entity';
 
 export class ProductPersistence implements ProductRepository {
   constructor(
@@ -26,7 +27,7 @@ export class ProductPersistence implements ProductRepository {
     `;
 
     const { content, currentPage, pageSize, totalElements } =
-      await this.connection.queryPaginate({
+      await this.connection.queryPaginate<ProductEntity>({
         statement: query,
         params: [category],
         page: page,
@@ -45,11 +46,12 @@ export class ProductPersistence implements ProductRepository {
     });
   }
 
-  async create(product: Product): Promise<void> {
+  async create(product: Product): Promise<Product> {
     const now = new Date();
     const query = `
       INSERT INTO product (name, category, price, description, status, created_at, updated_at)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *
     `;
     const params = [
       product.name,
@@ -62,11 +64,12 @@ export class ProductPersistence implements ProductRepository {
     ];
 
     try {
-      const result = await this.connection.query(query, params);
+      const result = await this.connection.query<ProductEntity>(query, params);
 
       if (!result) {
         throw new Error('Failed to create Product');
       }
+      return new Product(result[0]);
     } catch (error) {
       this.logger.error(
         `Error creating product persist query: ${query}, params: ${params}`,
@@ -77,16 +80,18 @@ export class ProductPersistence implements ProductRepository {
     }
   }
 
-  async delete(id: string): Promise<void> {
-    const query = `DELETE FROM product WHERE id = $1`;
+  async delete(id: string): Promise<Product> {
+    const query = `DELETE FROM product WHERE id = $1 RETURNING *`;
     const params = [id];
 
     try {
-      const result = await this.connection.query(query, params);
+      const result = await this.connection.query<ProductEntity>(query, params);
 
       if (!result) {
         throw new Error('Failed to delete Product');
       }
+
+      return new Product(result[0]);
     } catch (error) {
       this.logger.error(
         `Error deleting product persist query: ${query}, params: ${params}`,
@@ -101,27 +106,27 @@ export class ProductPersistence implements ProductRepository {
     const now = new Date();
     const query = `
       UPDATE product
-      SET name = $1, category = $2, price = $3, description = $4, status = $5, updated_at = $6
-      WHERE id = $7
+      SET name = $1, category = $2, price = $3, description = $4, updated_at = $5
+      WHERE id = $6
+      RETURNING *
     `;
     const params = [
       product.name,
       product.category.getValue(),
       product.price.getValue(),
       product.description,
-      product.status.getValue(),
       now,
       product.id,
     ];
 
     try {
-      const result = await this.connection.query<Product>(query, params);
+      const result = await this.connection.query<ProductEntity>(query, params);
 
       if (!result) {
         throw new Error('Failed to update Product');
       }
 
-      return result[0];
+      return new Product(result[0]);
     } catch (error) {
       this.logger.error(
         `Error updating product persist query: ${query}, params: ${params}`,
@@ -135,7 +140,7 @@ export class ProductPersistence implements ProductRepository {
     const query = `SELECT * FROM product`;
 
     try {
-      const result = await this.connection.query(query);
+      const result = await this.connection.query<ProductEntity>(query);
 
       if (!result?.length) {
         return [];
@@ -155,7 +160,7 @@ export class ProductPersistence implements ProductRepository {
     const query = `SELECT * FROM product WHERE id = $1`;
 
     try {
-      const result = await this.connection.query(query, [id]);
+      const result = await this.connection.query<ProductEntity>(query, [id]);
 
       if (!result) {
         return null;
