@@ -5,6 +5,6 @@ export function createWithLogger<T>(
   dependencies: any[],
   logger: Logger,
 ): T {
-  logger.setContext(providerClass.name); // Define o contexto dinamicamente
-  return new providerClass(...dependencies, logger); // Cria a instância com logger configurado
+  logger.setContext(providerClass.name);
+  return new providerClass(...dependencies, logger);
 }
