@@ -10,13 +10,20 @@ export class CreateProductInOrderUseCase {
   ) {}
 
   async execute(productDto: Product): Promise<void> {
-    await this.messagePublisher.publish({
-      id: productDto.id,
-      name: productDto.name,
-      category: productDto.category.getValue(),
-      description: productDto.description,
-      price: productDto.price.getValue(),
-      status: productDto.status.getValue(),
-    });
+    try {
+      await this.messagePublisher.publish({
+        id: productDto.id,
+        name: productDto.name,
+        category: productDto.category.getValue(),
+        description: productDto.description,
+        price: productDto.price.getValue(),
+        status: productDto.status.getValue(),
+      });
+    } catch (error) {
+      this.logger.log(
+        `An error ocurrend in send message to create order product ${error}`,
+      );
+      throw error;
+    }
   }
 }
