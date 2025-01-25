@@ -51,7 +51,7 @@ class ProductStatus {
   private static readonly allowedStatuses: ProductStatusType[] =
     Object.values(ProductStatusEnum);
 
-  private constructor(private readonly value: string) {}
+  private constructor(private readonly value: ProductStatusType) {}
 
   static create(status: ProductStatusType): ProductStatus {
     if (!ProductStatus.allowedStatuses.includes(status)) {
@@ -60,7 +60,7 @@ class ProductStatus {
     return new ProductStatus(status);
   }
 
-  getValue(): string {
+  getValue(): ProductStatusType {
     return this.value;
   }
 }
@@ -69,7 +69,7 @@ class ProductCategory {
   private static readonly allowedCategories: ProductCategoryType[] =
     Object.values(ProductCategoryEnum);
 
-  private constructor(private readonly value: string) {}
+  private constructor(private readonly value: ProductCategoryType) {}
 
   static create(category: ProductCategoryType): ProductCategory {
     if (!ProductCategory.allowedCategories.includes(category)) {
@@ -78,7 +78,7 @@ class ProductCategory {
     return new ProductCategory(category);
   }
 
-  getValue(): string {
+  getValue(): ProductCategoryType {
     return this.value;
   }
 }
