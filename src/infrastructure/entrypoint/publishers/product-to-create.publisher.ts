@@ -16,7 +16,7 @@ export class ProductToCreatePublisher
     this.queueUrl = process.env.ORDER_PRODUCT_CREATE_QUEUE || '';
     this.awsUrl = process.env.AWS_URL || '';
     if (!this.queueUrl) {
-      // throw new Error('Queue URL for Product Created not configured');
+      throw new Error('Queue URL for Product Created not configured');
     }
   }
 
