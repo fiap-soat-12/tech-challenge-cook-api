@@ -24,7 +24,7 @@ export class UpdateProductRequest {
     description: 'The category of the product',
   })
   @IsEnum(ProductCategoryEnum, {
-    message: 'category must be one of MAIN_COURSE, SIDE_DISH, DRINK, DESSERT',
+    message: `category must be one of ${Object.values(ProductCategoryEnum).join(', ')}`,
   })
   category: ProductCategoryType;
 
