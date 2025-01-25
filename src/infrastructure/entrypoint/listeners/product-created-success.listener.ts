@@ -37,7 +37,7 @@ export class ProductCreatedSuccessListener {
           this.logger.log(`Processing product: ${JSON.stringify(product)}`);
 
           // Delete a mensagem após processar
-          await this.deleteMessage(message.ReceiptHandle!);
+          await this.deleteMessage(message.ReceiptHandle);
         }
       }
     } catch (error) {
