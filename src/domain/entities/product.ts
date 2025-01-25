@@ -1,10 +1,15 @@
+import { ProductCategoryEnum } from '@application/enums/product-category.enum';
+import { ProductStatusEnum } from '@application/enums/product-status.enum';
+import { ProductCategoryType } from '@application/types/product-category.type';
+import { ProductStatusType } from '@application/types/product-status.type';
+
 interface ProductProps {
   id?: string;
   name: string;
-  category: string;
+  category: ProductCategoryType;
   price: number;
   description: string;
-  status: string;
+  status: ProductStatusType;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -43,11 +48,12 @@ class ProductPrice {
 }
 
 class ProductStatus {
-  private static readonly allowedStatuses = Object.values(ProductStatus);
+  private static readonly allowedStatuses: ProductStatusType[] =
+    Object.values(ProductStatusEnum);
 
   private constructor(private readonly value: string) {}
 
-  static create(status: string): ProductStatus {
+  static create(status: ProductStatusType): ProductStatus {
     if (!ProductStatus.allowedStatuses.includes(status)) {
       throw new Error(`Invalid status: ${status}`);
     }
@@ -60,11 +66,12 @@ class ProductStatus {
 }
 
 class ProductCategory {
-  private static readonly allowedCategories = Object.values(ProductCategory);
+  private static readonly allowedCategories: ProductCategoryType[] =
+    Object.values(ProductCategoryEnum);
 
   private constructor(private readonly value: string) {}
 
-  static create(category: string): ProductCategory {
+  static create(category: ProductCategoryType): ProductCategory {
     if (!ProductCategory.allowedCategories.includes(category)) {
       throw new Error(`Invalid category: ${category}`);
     }
