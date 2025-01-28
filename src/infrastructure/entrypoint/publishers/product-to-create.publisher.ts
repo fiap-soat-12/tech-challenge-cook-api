@@ -1,7 +1,7 @@
 import { SendProductDto } from '@application/dto/send-product.dto';
 import { Logger } from '@application/interfaces/logger.interface';
 import { MessagePublisher } from '@application/interfaces/message-publisher.interface';
-import { SqsClient } from '@infrastructure/config/sqs.config';
+import { SqsClient } from '@infrastructure/config/sqs-config/sqs.config';
 
 export class ProductToCreatePublisher
   implements MessagePublisher<SendProductDto>

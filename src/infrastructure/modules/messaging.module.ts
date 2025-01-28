@@ -1,6 +1,6 @@
 import { Logger } from '@application/interfaces/logger.interface';
-import { createWithLogger } from '@infrastructure/config/create-with-logger';
-import { SqsClient } from '@infrastructure/config/sqs.config';
+import { createWithLogger } from '@infrastructure/config/create-with-logger/create-with-logger';
+import { SqsClient } from '@infrastructure/config/sqs-config/sqs.config';
 import { ProductCreatedSuccessListener } from '@infrastructure/entrypoint/listeners/product-created-success.listener';
 import { ProductToCreatePublisher } from '@infrastructure/entrypoint/publishers/product-to-create.publisher';
 import { Module } from '@nestjs/common';

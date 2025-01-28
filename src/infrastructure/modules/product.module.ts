@@ -17,7 +17,7 @@ import { UpdateProductController } from '@infrastructure/entrypoint/controllers/
 import { ProductToCreatePublisher } from '@infrastructure/entrypoint/publishers/product-to-create.publisher';
 import { ProductPersistence } from '@infrastructure/repositories/product.persistence';
 import { Module } from '@nestjs/common';
-import { createWithLogger } from '../config/create-with-logger';
+import { createWithLogger } from '../config/create-with-logger/create-with-logger';
 import { DatabaseModule } from './database.module';
 import { LoggerModule } from './logger.module';
 import { MessagingModule } from './messaging.module';
