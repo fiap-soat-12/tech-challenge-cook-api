@@ -15,7 +15,6 @@ module.exports = {
     '!src/main.{ts,js}',
   ],
   reporters: [
-    'default',
     [
       'jest-html-reporter',
       {
