@@ -15,11 +15,12 @@ export class InMemoryProductRepository implements ProductRepository {
     return [...this.products];
   }
 
-  async create(product: Product): Promise<void> {
+  async create(product: Product): Promise<Product> {
     this.products.push(product);
+    return product;
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<Product> {
     const index = this.products.findIndex((product) => product.id === id);
 
     if (index === -1) {
@@ -27,6 +28,7 @@ export class InMemoryProductRepository implements ProductRepository {
     }
 
     this.products.splice(index, 1);
+    return null;
   }
 
   async update(product: Product): Promise<Product> {

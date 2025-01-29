@@ -7,21 +7,24 @@ import {
 
 export class ProductCreatedSuccessListener {
   private readonly queueUrl: string;
+  private readonly awsUrl: string;
 
   constructor(
     private readonly sqsClient: SQSClient,
     private readonly logger: Logger,
   ) {
     this.queueUrl = process.env.ORDER_PRODUCT_CREATE_ACCEPT_QUEUE || '';
-    if (!this.queueUrl) {
-      throw new Error('Queue URL for Product Created Success not configured');
-    }
+    this.awsUrl = process.env.AWS_URL || '';
   }
 
   async listen(): Promise<void> {
+    if (!this.queueUrl || !this.awsUrl) {
+      throw new Error('Queue URL for Product Created Success not configured');
+    }
+
     try {
       const command = new ReceiveMessageCommand({
-        QueueUrl: this.queueUrl,
+        QueueUrl: `${this.awsUrl}/${this.queueUrl}`,
         MaxNumberOfMessages: 10,
         WaitTimeSeconds: 10,
       });
