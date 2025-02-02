@@ -11,7 +11,7 @@ import { UpdateProductUseCase } from '@application/usecases/products/update-prod
 import { DatabaseConnection } from '@domain/interface/database-connection.interface';
 import { ProductRepository } from '@domain/repositories/product.repository';
 import { CreateProductController } from '@infrastructure/entrypoint/controllers/create-product/create-product.controller';
-import { InactivateProductController } from '@infrastructure/entrypoint/controllers/delete-product/inactivate-product.controller';
+import { InactivateProductController } from '@infrastructure/entrypoint/controllers/inactivate-product/inactivate-product.controller';
 import { GetProductByIdController } from '@infrastructure/entrypoint/controllers/get-product-by-id/get-product-by-id.controller';
 import { GetProductPaginatedController } from '@infrastructure/entrypoint/controllers/get-product-paginated/get-product-paginated.controller';
 import { GetProductController } from '@infrastructure/entrypoint/controllers/get-product/get-product.controller';
