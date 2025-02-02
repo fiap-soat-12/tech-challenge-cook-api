@@ -19,11 +19,7 @@ export class GetProductController {
     status: 200,
     description: 'Products retrieved successfully.',
     type: GetProductResponse,
-  })
-  @ApiResponse({
-    status: 204,
-    description: 'No Products retrieved.',
-    schema: {},
+    isArray: true,
   })
   @Get()
   async getProducts(): Promise<GetProductResponse[]> {

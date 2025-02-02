@@ -1,3 +1,4 @@
+import { ProductStatusType } from '@application/types/product-status.type';
 import { Product } from '@domain/entities/product';
 import { PageCollection } from '@domain/models/page-collection';
 import { ProductRepository } from '@domain/repositories/product.repository';
@@ -45,6 +46,7 @@ export class InMemoryProductRepository implements ProductRepository {
 
   async findAllByCategory(options: {
     category: string;
+    status: ProductStatusType;
     page: number;
     size: number;
   }): Promise<PageCollection<Product> | null> {

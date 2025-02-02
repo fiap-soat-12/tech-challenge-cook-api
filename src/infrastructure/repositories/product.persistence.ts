@@ -1,4 +1,5 @@
 import { Logger } from '@application/interfaces/logger.interface';
+import { ProductStatusType } from '@application/types/product-status.type';
 import { Product } from '@domain/entities/product';
 import { ProductPersistenceError } from '@domain/exceptions/product-persistence-error.exception';
 import { DatabaseConnection } from '@domain/interface/database-connection.interface';
@@ -16,20 +17,23 @@ export class ProductPersistence implements ProductRepository {
     category,
     page,
     size,
+    status,
   }: {
     category: string;
     page: number;
     size: number;
+    status: ProductStatusType;
   }): Promise<PageCollection<Product> | null> {
     const query = `
       SELECT * FROM product
       WHERE category = $1
+      AND status = $2
     `;
 
     const { content, currentPage, pageSize, totalElements } =
       await this.connection.queryPaginate<ProductEntity>({
         statement: query,
-        params: [category],
+        params: [category, status],
         page: page,
         size: size,
       });

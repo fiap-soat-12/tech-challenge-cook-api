@@ -1,3 +1,4 @@
+import { ProductStatusEnum } from '@application/enums/product-status.enum';
 import { Logger } from '@application/interfaces/logger.interface';
 import { Product } from '@domain/entities/product';
 import { PageCollection } from '@domain/models/page-collection';
@@ -26,6 +27,7 @@ export class GetProductPaginatedUseCase {
         category,
         page,
         size,
+        status: ProductStatusEnum.ACTIVE,
       });
     } catch (error) {
       this.logger.error(
