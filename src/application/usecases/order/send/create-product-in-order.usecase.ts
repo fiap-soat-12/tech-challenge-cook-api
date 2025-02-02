@@ -12,8 +12,8 @@ export class CreateProductInOrderUseCase {
   async execute(productDto: Product): Promise<void> {
     try {
       await this.messagePublisher.publish({
-        id: productDto.id,
         name: productDto.name,
+        id: productDto.id,
         category: productDto.category.getValue(),
         description: productDto.description,
         price: productDto.price.getValue(),
