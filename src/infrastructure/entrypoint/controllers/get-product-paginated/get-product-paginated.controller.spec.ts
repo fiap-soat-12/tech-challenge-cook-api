@@ -121,7 +121,7 @@ describe('GetProductPaginatedController', () => {
       };
 
       mockUseCase.execute.mockRejectedValue(
-        new Error('Unexpected database error'),
+        new Error('Database connection failed'),
       );
 
       await expect(
