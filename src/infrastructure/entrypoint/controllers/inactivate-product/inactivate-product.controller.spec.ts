@@ -1,27 +1,32 @@
 import { UUID } from '@application/types/UUID.type';
-import { DeleteProductUseCase } from '@application/usecases/products/delete-product/delete-product.usecase';
+import { InactivateProductUseCase } from '@application/usecases/products/delete-product/delete-product.usecase';
 import { ProductNotFoundException } from '@domain/exceptions/product-not-found.exception';
 import { HttpException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { DeleteProductController } from './delete-product.controller';
+import { InactivateProductController } from './inactivate-product.controller';
 
-describe('DeleteProductController', () => {
-  let controller: DeleteProductController;
-  let mockDeleteProductUseCase: jest.Mocked<DeleteProductUseCase>;
+describe('InactivateProductController', () => {
+  let controller: InactivateProductController;
+  let mockDeleteProductUseCase: jest.Mocked<InactivateProductUseCase>;
 
   beforeEach(async () => {
     mockDeleteProductUseCase = {
       execute: jest.fn(),
-    } as unknown as jest.Mocked<DeleteProductUseCase>;
+    } as unknown as jest.Mocked<InactivateProductUseCase>;
 
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [DeleteProductController],
+      controllers: [InactivateProductController],
       providers: [
-        { provide: DeleteProductUseCase, useValue: mockDeleteProductUseCase },
+        {
+          provide: InactivateProductUseCase,
+          useValue: mockDeleteProductUseCase,
+        },
       ],
     }).compile();
 
-    controller = module.get<DeleteProductController>(DeleteProductController);
+    controller = module.get<InactivateProductController>(
+      InactivateProductController,
+    );
   });
 
   describe('delete', () => {

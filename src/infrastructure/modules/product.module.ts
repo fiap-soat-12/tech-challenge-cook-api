@@ -3,7 +3,7 @@ import { CreateProductInOrderUseCase } from '@application/usecases/order/send/cr
 import { DeleteProductInOrderUseCase } from '@application/usecases/order/send/delete-product-in-order/delete-product-in-order.usecase';
 import { UpdateProductInOrderUseCase } from '@application/usecases/order/send/update-product-in-order/update-product-in-order.usecase';
 import { CreateProductUseCase } from '@application/usecases/products/create-product/create-product.usecase';
-import { DeleteProductUseCase } from '@application/usecases/products/delete-product/delete-product.usecase';
+import { InactivateProductUseCase } from '@application/usecases/products/delete-product/delete-product.usecase';
 import { GetProductByIdUseCase } from '@application/usecases/products/get-product-by-id/get-product-by-id.usecase';
 import { GetProductPaginatedUseCase } from '@application/usecases/products/get-product-paginated/get-product-paginated.usecase';
 import { GetProductUseCase } from '@application/usecases/products/get-product/get-product.usecase';
@@ -11,7 +11,7 @@ import { UpdateProductUseCase } from '@application/usecases/products/update-prod
 import { DatabaseConnection } from '@domain/interface/database-connection.interface';
 import { ProductRepository } from '@domain/repositories/product.repository';
 import { CreateProductController } from '@infrastructure/entrypoint/controllers/create-product/create-product.controller';
-import { DeleteProductController } from '@infrastructure/entrypoint/controllers/delete-product/delete-product.controller';
+import { InactivateProductController } from '@infrastructure/entrypoint/controllers/delete-product/inactivate-product.controller';
 import { GetProductByIdController } from '@infrastructure/entrypoint/controllers/get-product-by-id/get-product-by-id.controller';
 import { GetProductPaginatedController } from '@infrastructure/entrypoint/controllers/get-product-paginated/get-product-paginated.controller';
 import { GetProductController } from '@infrastructure/entrypoint/controllers/get-product/get-product.controller';
@@ -32,7 +32,7 @@ import { MessagingModule } from './messaging.module';
     GetProductController,
     GetProductPaginatedController,
     GetProductByIdController,
-    DeleteProductController,
+    InactivateProductController,
     UpdateProductController,
   ],
   providers: [
@@ -83,12 +83,12 @@ import { MessagingModule } from './messaging.module';
       inject: ['ProductRepository', UpdateProductInOrderUseCase, 'Logger'],
     },
     {
-      provide: DeleteProductUseCase,
+      provide: InactivateProductUseCase,
       useFactory: (
         repo: ProductRepository,
         queue: DeleteProductInOrderUseCase,
         logger: Logger,
-      ) => createWithLogger(DeleteProductUseCase, [repo, queue], logger),
+      ) => createWithLogger(InactivateProductUseCase, [repo, queue], logger),
       inject: ['ProductRepository', DeleteProductInOrderUseCase, 'Logger'],
     },
     {

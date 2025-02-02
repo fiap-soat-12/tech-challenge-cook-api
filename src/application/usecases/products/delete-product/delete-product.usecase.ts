@@ -3,7 +3,7 @@ import { DeleteProductInOrderUseCase } from '@application/usecases/order/send/de
 import { ProductNotFoundException } from '@domain/exceptions/product-not-found.exception';
 import { ProductRepository } from '@domain/repositories/product.repository';
 
-export class DeleteProductUseCase {
+export class InactivateProductUseCase {
   constructor(
     private readonly productRepository: ProductRepository,
     private readonly deleteProductInOrderUseCase: DeleteProductInOrderUseCase,

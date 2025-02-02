@@ -1,5 +1,5 @@
 import { UUID } from '@application/types/UUID.type';
-import { DeleteProductUseCase } from '@application/usecases/products/delete-product/delete-product.usecase';
+import { InactivateProductUseCase } from '@application/usecases/products/delete-product/delete-product.usecase';
 import { ProductNotFoundException } from '@domain/exceptions/product-not-found.exception';
 import { Erros4xx5xxResponse } from '@infrastructure/entrypoint/response/errors-4xx-5xx.response';
 import { UUIDValidationPipe } from '@infrastructure/entrypoint/validators/null-or-valid-uuid/null-or-valid-uuid.validator';
@@ -15,8 +15,10 @@ import {
 @ApiTags('Product')
 @ApiBearerAuth('Authorization')
 @Controller('products')
-export class DeleteProductController {
-  constructor(private readonly deleteProductUseCase: DeleteProductUseCase) {}
+export class InactivateProductController {
+  constructor(
+    private readonly deleteProductUseCase: InactivateProductUseCase,
+  ) {}
 
   @ApiOperation({ summary: 'Delete a Product By ID' })
   @ApiResponse({ status: 200, description: 'Product deleted successfully.' })
