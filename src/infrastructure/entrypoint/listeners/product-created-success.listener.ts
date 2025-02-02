@@ -54,9 +54,9 @@ export class ProductCreatedSuccessListener {
 
     try {
       await this.sqsClient.send(command);
-      this.logger.log(`Message sended from queue`);
+      this.logger.log(`Message deleted from queue`);
     } catch (error) {
-      this.logger.error(`Failed to inactivate message: ${error.message}`);
+      this.logger.error(`Failed to deleted message: ${error.message}`);
     }
   }
 }
