@@ -46,7 +46,7 @@ describe('CreateProductInOrderUseCase', () => {
     });
 
     expect(mockMessagePublisher.publish).toHaveBeenCalledTimes(1);
-    expect(mockLogger.log).not.toHaveBeenCalled(); // Não deve logar erro em caso de sucesso
+    expect(mockLogger.log).not.toHaveBeenCalled();
   });
 
   it('should log an error and rethrow it if the publish fails', async () => {

@@ -26,7 +26,7 @@ describe('DeleteProductInOrderUseCase', () => {
     productMock = new Product({
       id: '123-uuid',
       name: 'Test Product',
-      category: ProductCategoryEnum.DESSERT, // Mock da função getValue
+      category: ProductCategoryEnum.DESSERT,
       price: 100,
       description: 'A test product',
       status: ProductStatusEnum.ACTIVE,
@@ -41,7 +41,7 @@ describe('DeleteProductInOrderUseCase', () => {
     });
 
     expect(mockMessagePublisher.publish).toHaveBeenCalledTimes(1);
-    expect(mockLogger.log).not.toHaveBeenCalled(); // Não deve logar erro em caso de sucesso
+    expect(mockLogger.log).not.toHaveBeenCalled();
   });
 
   it('should log an error and rethrow it if the publish fails', async () => {
