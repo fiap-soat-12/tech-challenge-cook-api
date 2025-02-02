@@ -47,7 +47,7 @@ export class InactivateProductController {
     type: 'string',
   })
   @Delete(':id')
-  async delete(@Param('id', UUIDValidationPipe) id: UUID): Promise<void> {
+  async inactivate(@Param('id', UUIDValidationPipe) id: UUID): Promise<void> {
     try {
       await this.inactivateProductUseCase.execute(id);
     } catch (error) {

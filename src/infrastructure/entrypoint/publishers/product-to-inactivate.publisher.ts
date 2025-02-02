@@ -3,7 +3,7 @@ import { Logger } from '@application/interfaces/logger.interface';
 import { MessagePublisher } from '@application/interfaces/message-publisher.interface';
 import { SqsClient } from '@infrastructure/config/sqs-config/sqs.config';
 
-export class ProductToDeletePublisher
+export class ProductToInactivatePublisher
   implements MessagePublisher<SendProductDto>
 {
   private readonly queueUrl: string;

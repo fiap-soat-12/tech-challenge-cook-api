@@ -17,7 +17,7 @@ import { GetProductController } from '@infrastructure/entrypoint/controllers/get
 import { InactivateProductController } from '@infrastructure/entrypoint/controllers/inactivate-product/inactivate-product.controller';
 import { UpdateProductController } from '@infrastructure/entrypoint/controllers/update-product/update-product.controller';
 import { ProductToCreatePublisher } from '@infrastructure/entrypoint/publishers/product-to-create.publisher';
-import { ProductToDeletePublisher } from '@infrastructure/entrypoint/publishers/product-to-delete.publisher';
+import { ProductToInactivatePublisher } from '@infrastructure/entrypoint/publishers/product-to-inactivate.publisher';
 import { ProductToUpdatePublisher } from '@infrastructure/entrypoint/publishers/product-to-update.publisher';
 import { ProductPersistence } from '@infrastructure/repositories/product.persistence';
 import { Module } from '@nestjs/common';
@@ -58,9 +58,9 @@ import { MessagingModule } from './messaging.module';
     },
     {
       provide: InactivateProductInOrderUseCase,
-      useFactory: (sqs: ProductToDeletePublisher, logger: Logger) =>
+      useFactory: (sqs: ProductToInactivatePublisher, logger: Logger) =>
         createWithLogger(InactivateProductInOrderUseCase, [sqs], logger),
-      inject: ['ProductToDeletePublisher', 'Logger'],
+      inject: ['ProductToInactivatePublisher', 'Logger'],
     },
 
     // Usecases

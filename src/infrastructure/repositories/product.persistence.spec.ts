@@ -132,11 +132,11 @@ describe('ProductPersistence', () => {
     });
   });
 
-  describe('delete', () => {
-    it('should delete a product and return it', async () => {
+  describe('inactivate', () => {
+    it('should inactivate a product and return it', async () => {
       const mockProduct: ProductEntity = {
         id: '1',
-        name: 'Deleted Product',
+        name: 'inactivated Product',
         category: ProductCategoryEnum.DESSERT,
         price: 10,
         description: 'Description 1',
@@ -150,7 +150,7 @@ describe('ProductPersistence', () => {
       const result = await productPersistence.inactivate('1');
 
       expect(result).toBeInstanceOf(Product);
-      expect(result.name).toBe('Deleted Product');
+      expect(result.name).toBe('inactivated Product');
     });
 
     it('should log an error and throw ProductPersistenceError if deletion fails', async () => {
