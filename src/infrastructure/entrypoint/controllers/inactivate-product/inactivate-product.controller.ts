@@ -1,5 +1,5 @@
 import { UUID } from '@application/types/UUID.type';
-import { InactivateProductUseCase } from '@application/usecases/products/delete-product/delete-product.usecase';
+import { InactivateProductUseCase } from '@application/usecases/products/inactivate-product/inactivate-product.usecase';
 import { ProductNotFoundException } from '@domain/exceptions/product-not-found.exception';
 import { Erros4xx5xxResponse } from '@infrastructure/entrypoint/response/errors-4xx-5xx.response';
 import { UUIDValidationPipe } from '@infrastructure/entrypoint/validators/null-or-valid-uuid/null-or-valid-uuid.validator';
@@ -17,11 +17,14 @@ import {
 @Controller('products')
 export class InactivateProductController {
   constructor(
-    private readonly deleteProductUseCase: InactivateProductUseCase,
+    private readonly inactivateProductUseCase: InactivateProductUseCase,
   ) {}
 
-  @ApiOperation({ summary: 'Delete a Product By ID' })
-  @ApiResponse({ status: 200, description: 'Product deleted successfully.' })
+  @ApiOperation({ summary: 'Inactivate a Product By ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Product inactivated successfully.',
+  })
   @ApiResponse({
     status: 400,
     description: 'Bad Request',
@@ -46,7 +49,7 @@ export class InactivateProductController {
   @Delete(':id')
   async delete(@Param('id', UUIDValidationPipe) id: UUID): Promise<void> {
     try {
-      await this.deleteProductUseCase.execute(id);
+      await this.inactivateProductUseCase.execute(id);
     } catch (error) {
       if (error instanceof ProductNotFoundException) {
         throw new HttpException(error.message, 404);

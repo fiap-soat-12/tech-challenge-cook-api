@@ -4,10 +4,10 @@ import { Logger } from '@application/interfaces/logger.interface';
 import { MessagePublisher } from '@application/interfaces/message-publisher.interface';
 import { UUID } from '@application/types/UUID.type';
 import { Product } from '@domain/entities/product';
-import { DeleteProductInOrderUseCase } from './delete-product-in-order.usecase';
+import { InactivateProductInOrderUseCase } from './inactivate-product-in-order.usecase';
 
-describe('DeleteProductInOrderUseCase', () => {
-  let useCase: DeleteProductInOrderUseCase;
+describe('InactivateProductInOrderUseCase', () => {
+  let useCase: InactivateProductInOrderUseCase;
   let mockMessagePublisher: jest.Mocked<MessagePublisher<{ id: UUID }>>;
   let mockLogger: jest.Mocked<Logger>;
   let productMock: Product;
@@ -21,7 +21,10 @@ describe('DeleteProductInOrderUseCase', () => {
       log: jest.fn(),
     } as unknown as jest.Mocked<Logger>;
 
-    useCase = new DeleteProductInOrderUseCase(mockMessagePublisher, mockLogger);
+    useCase = new InactivateProductInOrderUseCase(
+      mockMessagePublisher,
+      mockLogger,
+    );
 
     productMock = new Product({
       id: '123-uuid',
@@ -55,7 +58,7 @@ describe('DeleteProductInOrderUseCase', () => {
     });
 
     expect(mockLogger.log).toHaveBeenCalledWith(
-      `An error ocurrend in send message to delete order product ${error}`,
+      `An error ocurrend in send message to inactivate order product ${error}`,
     );
   });
 });

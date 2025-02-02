@@ -3,7 +3,7 @@ import { MessagePublisher } from '@application/interfaces/message-publisher.inte
 import { UUID } from '@application/types/UUID.type';
 import { Product } from '@domain/entities/product';
 
-export class DeleteProductInOrderUseCase {
+export class InactivateProductInOrderUseCase {
   constructor(
     private readonly messagePublisher: MessagePublisher<{ id: UUID }>,
     private readonly logger: Logger,

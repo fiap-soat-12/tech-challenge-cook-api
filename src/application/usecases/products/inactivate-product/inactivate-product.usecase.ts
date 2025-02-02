@@ -1,12 +1,12 @@
 import { Logger } from '@application/interfaces/logger.interface';
-import { DeleteProductInOrderUseCase } from '@application/usecases/order/send/delete-product-in-order/delete-product-in-order.usecase';
+import { InactivateProductInOrderUseCase } from '@application/usecases/order/send/inactivate-product-in-order/inactivate-product-in-order.usecase';
 import { ProductNotFoundException } from '@domain/exceptions/product-not-found.exception';
 import { ProductRepository } from '@domain/repositories/product.repository';
 
 export class InactivateProductUseCase {
   constructor(
     private readonly productRepository: ProductRepository,
-    private readonly deleteProductInOrderUseCase: DeleteProductInOrderUseCase,
+    private readonly deleteProductInOrderUseCase: InactivateProductInOrderUseCase,
     private readonly logger: Logger,
   ) {}
 

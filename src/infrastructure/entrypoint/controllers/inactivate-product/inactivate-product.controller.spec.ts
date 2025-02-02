@@ -1,5 +1,5 @@
 import { UUID } from '@application/types/UUID.type';
-import { InactivateProductUseCase } from '@application/usecases/products/delete-product/delete-product.usecase';
+import { InactivateProductUseCase } from '@application/usecases/products/inactivate-product/inactivate-product.usecase';
 import { ProductNotFoundException } from '@domain/exceptions/product-not-found.exception';
 import { HttpException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';

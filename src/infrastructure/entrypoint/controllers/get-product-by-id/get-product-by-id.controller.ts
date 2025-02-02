@@ -43,7 +43,7 @@ export class GetProductByIdController {
   })
   @ApiParam({
     name: 'id',
-    description: 'UUID of the product to delete',
+    description: 'UUID of the product to inactivate',
     example: 'a6b9e046-fb5a-4a79-9d86-363e6fd20e11',
     type: 'string',
   })
