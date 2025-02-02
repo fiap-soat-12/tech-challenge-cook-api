@@ -4,7 +4,7 @@ import { PageCollection } from '@domain/models/page-collection';
 
 export interface ProductRepository {
   create(product: Product): Promise<Product>;
-  delete(id: string): Promise<Product>;
+  inactivate(id: string): Promise<Product>;
   update(product: Product): Promise<Product>;
   findById(id: string): Promise<Product>;
   findAll(): Promise<Product[]>;

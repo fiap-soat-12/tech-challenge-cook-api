@@ -147,7 +147,7 @@ describe('ProductPersistence', () => {
 
       mockConnection.query.mockResolvedValue([mockProduct]);
 
-      const result = await productPersistence.delete('1');
+      const result = await productPersistence.inactivate('1');
 
       expect(result).toBeInstanceOf(Product);
       expect(result.name).toBe('Deleted Product');
@@ -156,7 +156,7 @@ describe('ProductPersistence', () => {
     it('should log an error and throw ProductPersistenceError if deletion fails', async () => {
       mockConnection.query.mockRejectedValue(new Error('Database error'));
 
-      await expect(productPersistence.delete('1')).rejects.toThrow(
+      await expect(productPersistence.inactivate('1')).rejects.toThrow(
         ProductPersistenceError,
       );
       expect(mockLogger.error).toHaveBeenCalled();

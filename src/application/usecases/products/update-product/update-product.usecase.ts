@@ -1,5 +1,6 @@
 import { UpdateProductDto } from '@application/dto/update-product.dto';
 import { Logger } from '@application/interfaces/logger.interface';
+import { UpdateProductInOrderUseCase } from '@application/usecases/order/send/update-product-in-order/update-product-in-order.usecase';
 import { Product } from '@domain/entities/product';
 import { ProductNotFoundException } from '@domain/exceptions/product-not-found.exception';
 import { ProductRepository } from '@domain/repositories/product.repository';
@@ -7,6 +8,7 @@ import { ProductRepository } from '@domain/repositories/product.repository';
 export class UpdateProductUseCase {
   constructor(
     private readonly productRepository: ProductRepository,
+    private readonly updateProductInOrderUseCase: UpdateProductInOrderUseCase,
     private readonly logger: Logger,
   ) {}
 
@@ -30,6 +32,8 @@ export class UpdateProductUseCase {
       });
 
       await this.productRepository.update(updatedProduct);
+
+      this.updateProductInOrderUseCase.execute(updatedProduct);
 
       return updatedProduct;
     } catch (error) {

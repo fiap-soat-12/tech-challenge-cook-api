@@ -92,7 +92,7 @@ describe('InMemoryProductRepository', () => {
     });
   });
 
-  describe('delete', () => {
+  describe('inactivate', () => {
     it('should remove a product from the repository', async () => {
       const product = new Product({
         id: '1',
@@ -104,14 +104,14 @@ describe('InMemoryProductRepository', () => {
       });
 
       await repository.create(product);
-      await repository.delete('1');
+      await repository.inactivate('1');
 
       const result = await repository.findAll();
       expect(result).toHaveLength(0);
     });
 
     it('should throw an error if the product is not found', async () => {
-      await expect(repository.delete('1')).rejects.toThrow(
+      await expect(repository.inactivate('1')).rejects.toThrow(
         'Product with id 1 not found',
       );
     });

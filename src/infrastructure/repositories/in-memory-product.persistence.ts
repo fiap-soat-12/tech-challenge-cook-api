@@ -21,7 +21,7 @@ export class InMemoryProductRepository implements ProductRepository {
     return product;
   }
 
-  async delete(id: string): Promise<Product> {
+  async inactivate(id: string): Promise<Product> {
     const index = this.products.findIndex((product) => product.id === id);
 
     if (index === -1) {

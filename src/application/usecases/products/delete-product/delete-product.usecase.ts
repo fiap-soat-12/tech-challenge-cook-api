@@ -1,10 +1,12 @@
 import { Logger } from '@application/interfaces/logger.interface';
+import { DeleteProductInOrderUseCase } from '@application/usecases/order/send/delete-product-in-order/delete-product-in-order.usecase';
 import { ProductNotFoundException } from '@domain/exceptions/product-not-found.exception';
 import { ProductRepository } from '@domain/repositories/product.repository';
 
 export class DeleteProductUseCase {
   constructor(
     private readonly productRepository: ProductRepository,
+    private readonly deleteProductInOrderUseCase: DeleteProductInOrderUseCase,
     private readonly logger: Logger,
   ) {}
 
@@ -18,8 +20,10 @@ export class DeleteProductUseCase {
         throw new ProductNotFoundException(id);
       }
 
-      await this.productRepository.delete(id);
+      await this.productRepository.inactivate(id);
       this.logger.log(`Delete product with id ${id} successfully`);
+
+      this.deleteProductInOrderUseCase.execute(product);
     } catch (error) {
       this.logger.error(`Delete product with id: ${id} failed`);
 

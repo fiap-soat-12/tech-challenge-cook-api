@@ -3,6 +3,8 @@ import { createWithLogger } from '@infrastructure/config/create-with-logger/crea
 import { SqsClient } from '@infrastructure/config/sqs-config/sqs.config';
 import { ProductCreatedSuccessListener } from '@infrastructure/entrypoint/listeners/product-created-success.listener';
 import { ProductToCreatePublisher } from '@infrastructure/entrypoint/publishers/product-to-create.publisher';
+import { ProductToDeletePublisher } from '@infrastructure/entrypoint/publishers/product-to-delete.publisher';
+import { ProductToUpdatePublisher } from '@infrastructure/entrypoint/publishers/product-to-update.publisher';
 import { Module } from '@nestjs/common';
 import { LoggerModule } from './logger.module';
 
@@ -19,13 +21,30 @@ import { LoggerModule } from './logger.module';
       inject: ['SqsClient', 'Logger'],
     },
     {
+      provide: 'ProductToUpdatePublisher',
+      useFactory: (sqsClient: SqsClient, logger: Logger) =>
+        createWithLogger(ProductToUpdatePublisher, [sqsClient], logger),
+      inject: ['SqsClient', 'Logger'],
+    },
+    {
+      provide: 'ProductToDeletePublisher',
+      useFactory: (sqsClient: SqsClient, logger: Logger) =>
+        createWithLogger(ProductToDeletePublisher, [sqsClient], logger),
+      inject: ['SqsClient', 'Logger'],
+    },
+    {
       provide: 'ProductCreatedSuccessListener',
       useFactory: (sqsClient: SqsClient, logger: Logger) =>
         createWithLogger(ProductCreatedSuccessListener, [sqsClient], logger),
       inject: ['SqsClient', 'Logger'],
     },
   ],
-  exports: ['ProductToCreatePublisher', 'ProductCreatedSuccessListener'],
+  exports: [
+    'ProductToCreatePublisher',
+    'ProductToDeletePublisher',
+    'ProductToUpdatePublisher',
+    'ProductCreatedSuccessListener',
+  ],
   imports: [LoggerModule],
 })
 export class MessagingModule {}

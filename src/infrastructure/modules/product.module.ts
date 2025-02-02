@@ -51,16 +51,16 @@ import { MessagingModule } from './messaging.module';
       inject: ['ProductToCreatePublisher', 'Logger'],
     },
     {
-      provide: DeleteProductInOrderUseCase,
-      useFactory: (sqs: ProductToDeletePublisher, logger: Logger) =>
-        createWithLogger(DeleteProductInOrderUseCase, [sqs], logger),
-      inject: ['ProductToDeletePublisher', 'Logger'],
-    },
-    {
       provide: UpdateProductInOrderUseCase,
       useFactory: (sqs: ProductToUpdatePublisher, logger: Logger) =>
         createWithLogger(UpdateProductInOrderUseCase, [sqs], logger),
       inject: ['ProductToUpdatePublisher', 'Logger'],
+    },
+    {
+      provide: DeleteProductInOrderUseCase,
+      useFactory: (sqs: ProductToDeletePublisher, logger: Logger) =>
+        createWithLogger(DeleteProductInOrderUseCase, [sqs], logger),
+      inject: ['ProductToDeletePublisher', 'Logger'],
     },
 
     // Usecases
@@ -80,7 +80,7 @@ import { MessagingModule } from './messaging.module';
         queue: UpdateProductInOrderUseCase,
         logger: Logger,
       ) => createWithLogger(UpdateProductUseCase, [repo, queue], logger),
-      inject: ['ProductRepository', 'Logger'],
+      inject: ['ProductRepository', UpdateProductInOrderUseCase, 'Logger'],
     },
     {
       provide: DeleteProductUseCase,

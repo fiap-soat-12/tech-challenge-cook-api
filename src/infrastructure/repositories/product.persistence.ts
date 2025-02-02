@@ -96,25 +96,30 @@ export class ProductPersistence implements ProductRepository {
     }
   }
 
-  async delete(id: string): Promise<Product> {
-    const query = `DELETE FROM product WHERE id = $1 RETURNING *`;
-    const params = [id];
+  async inactivate(id: string): Promise<Product> {
+    const now = new Date();
+    const query = `
+      UPDATE product
+      SET status = $1, updated_at = INACTIVE
+      WHERE id = $2
+      RETURNING *
+    `;
+    const params = [id, now];
 
     try {
       const result = await this.connection.query<ProductEntity>(query, params);
 
       if (!result) {
-        throw new Error('Failed to delete Product');
+        throw new Error('Failed to update Product');
       }
 
       return new Product(result[0]);
     } catch (error) {
       this.logger.error(
-        `Error deleting product persist query: ${query}, params: ${params}`,
+        `Error updating product persist query: ${query}, params: ${params}`,
         error,
       );
-
-      throw new ProductPersistenceError('Failed to delete Product');
+      throw new ProductPersistenceError('Failed to update Product');
     }
   }
 
