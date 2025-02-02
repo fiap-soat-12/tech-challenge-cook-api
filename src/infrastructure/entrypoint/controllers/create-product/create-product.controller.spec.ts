@@ -72,7 +72,7 @@ describe('CreateProductController', () => {
       await expect(controller.createUser(request)).rejects.toThrow(
         HttpException,
       );
-      await expect(controller.createUser(request)).rejects.toThrowError(
+      await expect(controller.createUser(request)).rejects.toThrow(
         'Bad Request',
       );
     });
@@ -95,7 +95,7 @@ describe('CreateProductController', () => {
       await expect(controller.createUser(request)).rejects.toThrow(
         HttpException,
       );
-      await expect(controller.createUser(request)).rejects.toThrowError(
+      await expect(controller.createUser(request)).rejects.toThrow(
         'Internal Server Error',
       );
     });

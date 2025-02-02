@@ -60,7 +60,7 @@ describe('GetProductByIdController', () => {
       await expect(controller.getProductById(productId)).rejects.toThrow(
         HttpException,
       );
-      await expect(controller.getProductById(productId)).rejects.toThrowError(
+      await expect(controller.getProductById(productId)).rejects.toThrow(
         'Product not found',
       );
       await expect(controller.getProductById(productId)).rejects.toThrow(
@@ -76,7 +76,7 @@ describe('GetProductByIdController', () => {
       await expect(controller.getProductById(productId)).rejects.toThrow(
         HttpException,
       );
-      await expect(controller.getProductById(productId)).rejects.toThrowError(
+      await expect(controller.getProductById(productId)).rejects.toThrow(
         'Database failure',
       );
       await expect(controller.getProductById(productId)).rejects.toThrow(

@@ -71,7 +71,7 @@ describe('GetProductController', () => {
       );
 
       await expect(controller.getProducts()).rejects.toThrow(HttpException);
-      await expect(controller.getProducts()).rejects.toThrowError(
+      await expect(controller.getProducts()).rejects.toThrow(
         'Database connection failed',
       );
       await expect(controller.getProducts()).rejects.toThrow(

@@ -43,7 +43,7 @@ describe('DeleteProductController', () => {
       );
 
       await expect(controller.delete(productId)).rejects.toThrow(HttpException);
-      await expect(controller.delete(productId)).rejects.toThrowError(
+      await expect(controller.delete(productId)).rejects.toThrow(
         'Product not found',
       );
       await expect(controller.delete(productId)).rejects.toThrow(
