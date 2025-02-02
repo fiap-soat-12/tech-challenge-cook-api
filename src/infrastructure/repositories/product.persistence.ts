@@ -42,11 +42,23 @@ export class ProductPersistence implements ProductRepository {
       return null;
     }
 
-    return new PageCollection({
+    return new PageCollection<Product>({
       currentPage,
       pageSize,
       totalElements,
-      content: content.map((value) => new Product({ ...value })),
+      content: content.map(
+        (value) =>
+          new Product({
+            category: value.category,
+            description: value.description,
+            name: value.name,
+            price: value.price,
+            status: value.status,
+            createdAt: value.createdAt,
+            id: value.id,
+            updatedAt: value.updatedAt,
+          }),
+      ),
     });
   }
 
