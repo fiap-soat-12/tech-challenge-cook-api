@@ -16,7 +16,7 @@ export class InactivateProductInOrderUseCase {
       });
     } catch (error) {
       this.logger.log(
-        `An error ocurrend in send message to delete order product ${error}`,
+        `An error ocurrend in send message to inactivate order product ${error}`,
       );
       throw error;
     }

@@ -35,11 +35,9 @@ export class ProductCreatedSuccessListener {
         for (const message of response.Messages) {
           this.logger.log(`Message received: ${message.Body}`);
 
-          // Aqui você processa a mensagem
           const product = JSON.parse(message.Body);
           this.logger.log(`Processing product: ${JSON.stringify(product)}`);
 
-          // Delete a mensagem após processar
           await this.deleteMessage(message.ReceiptHandle);
         }
       }
@@ -56,9 +54,9 @@ export class ProductCreatedSuccessListener {
 
     try {
       await this.sqsClient.send(command);
-      this.logger.log(`Message deleted from queue`);
+      this.logger.log(`Message sended from queue`);
     } catch (error) {
-      this.logger.error(`Failed to delete message: ${error.message}`);
+      this.logger.error(`Failed to inactivate message: ${error.message}`);
     }
   }
 }
