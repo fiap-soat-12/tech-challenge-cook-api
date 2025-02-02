@@ -52,17 +52,17 @@ export class GetProductPaginatedController {
     @Query() query: GetProductsQueryRequest,
     @Res() res: Response<PaginatedResponseDto<GetProductResponse>>,
   ) {
-    const productPaginated = await this.usecase.execute({
-      page: Number(query.page),
-      size: Number(query.size),
-      category: query.category,
-    });
-
-    if (!productPaginated) {
-      res.status(HttpStatus.NO_CONTENT).send();
-    }
-
     try {
+      const productPaginated = await this.usecase.execute({
+        page: Number(query.page),
+        size: Number(query.size),
+        category: query.category,
+      });
+
+      if (!productPaginated) {
+        return res.status(HttpStatus.NO_CONTENT).send();
+      }
+
       const products: GetProductResponse[] = productPaginated.content.map(
         (value) =>
           new GetProductResponse({
@@ -81,7 +81,6 @@ export class GetProductPaginatedController {
         totalElements: productPaginated.totalElements,
         totalPages: productPaginated.totalPages,
       });
-      return;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
