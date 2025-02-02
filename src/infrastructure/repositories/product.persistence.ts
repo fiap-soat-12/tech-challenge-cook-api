@@ -100,8 +100,8 @@ export class ProductPersistence implements ProductRepository {
     const now = new Date();
     const query = `
       UPDATE product
-      SET status = $1, updated_at = INACTIVE
-      WHERE id = $2
+      SET status = 'INACTIVE', updated_at = $2
+      WHERE id = $1
       RETURNING *
     `;
     const params = [id, now];
