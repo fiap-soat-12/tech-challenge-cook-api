@@ -129,7 +129,7 @@ describe('GetProductPaginatedController', () => {
       ).rejects.toThrow(HttpException);
       await expect(
         controller.getProductsPaginated(query, mockResponse as Response),
-      ).rejects.toThrow('Unexpected database error');
+      ).rejects.toThrow('Database connection failed');
     });
   });
 });

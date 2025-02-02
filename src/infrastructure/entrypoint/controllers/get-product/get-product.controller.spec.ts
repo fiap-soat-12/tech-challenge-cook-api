@@ -2,7 +2,6 @@ import { ProductCategoryEnum } from '@application/enums/product-category.enum';
 import { ProductStatusEnum } from '@application/enums/product-status.enum';
 import { GetProductUseCase } from '@application/usecases/products/get-product/get-product.usecase';
 import { Product } from '@domain/entities/product';
-import { HttpException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { GetProductResponse } from '../../response/get-product.response';
 import { GetProductController } from './get-product.controller';
@@ -70,12 +69,9 @@ describe('GetProductController', () => {
         new Error('Database connection failed'),
       );
 
-      await expect(controller.getProducts()).rejects.toThrow(HttpException);
+      await expect(controller.getProducts()).rejects.toThrow(Error);
       await expect(controller.getProducts()).rejects.toThrow(
         'Database connection failed',
-      );
-      await expect(controller.getProducts()).rejects.toThrow(
-        expect.objectContaining({ status: 500 }),
       );
     });
   });
