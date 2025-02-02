@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+interface PaginatedResponseDtoProps<T> {
+  content: T[];
+  currentPage: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+}
+
 export class PaginatedResponseDto<T> {
   @ApiProperty({
     description: 'List of items in the current page',
@@ -19,13 +27,13 @@ export class PaginatedResponseDto<T> {
   @ApiProperty({ description: 'Total number of pages', example: 31 })
   totalPages: number;
 
-  constructor(
-    content: T[],
-    currentPage: number,
-    pageSize: number,
-    totalElements: number,
-    totalPages: number,
-  ) {
+  constructor({
+    content,
+    currentPage,
+    pageSize,
+    totalElements,
+    totalPages,
+  }: PaginatedResponseDtoProps<T>) {
     this.content = content;
     this.currentPage = currentPage;
     this.pageSize = pageSize;
