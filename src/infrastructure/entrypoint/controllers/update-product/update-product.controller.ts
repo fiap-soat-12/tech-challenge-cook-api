@@ -21,7 +21,11 @@ export class UpdateProductController {
   constructor(private readonly updateProductUseCase: UpdateProductUseCase) {}
 
   @ApiOperation({ summary: 'Update a Product By ID' })
-  @ApiResponse({ status: 200, description: 'Product updated successfully.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Product updated successfully.',
+    type: GetProductResponse,
+  })
   @ApiResponse({ status: 404, description: 'Product not found.' })
   @ApiParam({
     name: 'id',

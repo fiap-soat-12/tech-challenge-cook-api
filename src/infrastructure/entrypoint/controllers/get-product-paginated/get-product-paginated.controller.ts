@@ -26,7 +26,27 @@ export class GetProductPaginatedController {
 
   @Get('/category')
   @ApiOperation({ summary: 'Find a Product By Category' })
-  @ApiResponse({ status: 200, description: 'Products retrieved successfully.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Products retrieved successfully.',
+    schema: {
+      example: {
+        content: [
+          {
+            id: '7901cbdc-2d24-4faf-aadd-995a7bcc6b5b',
+            name: 'Hambúrguer Clássico',
+            category: 'MAIN_COURSE',
+            description: 'Hambúrguer com carne bovina, queijo e salada',
+            price: '30.00',
+          },
+        ],
+        currentPage: 0,
+        pageSize: 1,
+        totalElements: 31,
+        totalPages: 31,
+      },
+    },
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async getProductsPaginated(
     @Query() query: GetProductsQueryRequest,
