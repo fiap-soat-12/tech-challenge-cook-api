@@ -1,5 +1,5 @@
 import { Logger } from '@application/interfaces/logger.interface';
-import { CreateProductInOrderUseCase } from '@application/usecases/order/send/create-product-in-order.usecase';
+import { CreateProductInOrderUseCase } from '@application/usecases/order/send/create-product-in-order/create-product-in-order.usecase';
 import { CreateProductUseCase } from '@application/usecases/products/create-product/create-product.usecase';
 import { DeleteProductUseCase } from '@application/usecases/products/delete-product/delete-product.usecase';
 import { GetProductByIdUseCase } from '@application/usecases/products/get-product-by-id/get-product-by-id.usecase';
