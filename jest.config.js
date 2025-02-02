@@ -4,17 +4,12 @@ module.exports = {
     '^@domain/(.*)$': '<rootDir>/src/domain/$1',
     '^@infra/(.*)$': '<rootDir>/src/infra/$1',
   },
-  transformIgnorePatterns: [
-    '<rootDir>/node_modules/', // Ignorar arquivos em node_modules
-    '<rootDir>/src/**/*.d.ts', // Ignorar arquivos de definição de tipo TypeScript
-  ],
 
   collectCoverageFrom: [
     'src/**/*.{ts,js}',
     '!src/**/*.module.{ts,js}', // Ignorar arquivos de módulos NestJS
     '!src/**/*.config.{ts,js}', // Ignorar arquivos de configuração da aplicação
     '!src/main.{ts,js}', // Ignorar o arquivo principal
-    '!src/**/*.{d.ts,interface.ts,type.ts}', // Ignorar arquivos de definição, interfaces e tipos
     '!src/**/*.(spec|test).{ts,js}', // Ignorar arquivos de testes
   ],
   collectCoverage: true,
