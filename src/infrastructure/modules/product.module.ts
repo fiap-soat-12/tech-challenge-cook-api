@@ -1,5 +1,7 @@
 import { Logger } from '@application/interfaces/logger.interface';
 import { CreateProductInOrderUseCase } from '@application/usecases/order/send/create-product-in-order/create-product-in-order.usecase';
+import { DeleteProductInOrderUseCase } from '@application/usecases/order/send/delete-product-in-order/delete-product-in-order.usecase';
+import { UpdateProductInOrderUseCase } from '@application/usecases/order/send/update-product-in-order/update-product-in-order.usecase';
 import { CreateProductUseCase } from '@application/usecases/products/create-product/create-product.usecase';
 import { DeleteProductUseCase } from '@application/usecases/products/delete-product/delete-product.usecase';
 import { GetProductByIdUseCase } from '@application/usecases/products/get-product-by-id/get-product-by-id.usecase';
@@ -15,6 +17,8 @@ import { GetProductPaginatedController } from '@infrastructure/entrypoint/contro
 import { GetProductController } from '@infrastructure/entrypoint/controllers/get-product/get-product.controller';
 import { UpdateProductController } from '@infrastructure/entrypoint/controllers/update-product/update-product.controller';
 import { ProductToCreatePublisher } from '@infrastructure/entrypoint/publishers/product-to-create.publisher';
+import { ProductToDeletePublisher } from '@infrastructure/entrypoint/publishers/product-to-delete.publisher';
+import { ProductToUpdatePublisher } from '@infrastructure/entrypoint/publishers/product-to-update.publisher';
 import { ProductPersistence } from '@infrastructure/repositories/product.persistence';
 import { Module } from '@nestjs/common';
 import { createWithLogger } from '../config/create-with-logger/create-with-logger';
@@ -38,13 +42,28 @@ import { MessagingModule } from './messaging.module';
         new ProductPersistence(dbConnection, logger),
       inject: ['DatabaseConnection', 'Logger'],
     },
-    // Casos de Uso
+
+    // Message Usecases
     {
       provide: CreateProductInOrderUseCase,
       useFactory: (sqs: ProductToCreatePublisher, logger: Logger) =>
         createWithLogger(CreateProductInOrderUseCase, [sqs], logger),
       inject: ['ProductToCreatePublisher', 'Logger'],
     },
+    {
+      provide: DeleteProductInOrderUseCase,
+      useFactory: (sqs: ProductToDeletePublisher, logger: Logger) =>
+        createWithLogger(DeleteProductInOrderUseCase, [sqs], logger),
+      inject: ['ProductToDeletePublisher', 'Logger'],
+    },
+    {
+      provide: UpdateProductInOrderUseCase,
+      useFactory: (sqs: ProductToUpdatePublisher, logger: Logger) =>
+        createWithLogger(UpdateProductInOrderUseCase, [sqs], logger),
+      inject: ['ProductToUpdatePublisher', 'Logger'],
+    },
+
+    // Usecases
     {
       provide: CreateProductUseCase,
       useFactory: (
@@ -56,15 +75,21 @@ import { MessagingModule } from './messaging.module';
     },
     {
       provide: UpdateProductUseCase,
-      useFactory: (repo: ProductRepository, logger: Logger) =>
-        createWithLogger(UpdateProductUseCase, [repo], logger),
+      useFactory: (
+        repo: ProductRepository,
+        queue: UpdateProductInOrderUseCase,
+        logger: Logger,
+      ) => createWithLogger(UpdateProductUseCase, [repo, queue], logger),
       inject: ['ProductRepository', 'Logger'],
     },
     {
       provide: DeleteProductUseCase,
-      useFactory: (repo: ProductRepository, logger: Logger) =>
-        createWithLogger(DeleteProductUseCase, [repo], logger),
-      inject: ['ProductRepository', 'Logger'],
+      useFactory: (
+        repo: ProductRepository,
+        queue: DeleteProductInOrderUseCase,
+        logger: Logger,
+      ) => createWithLogger(DeleteProductUseCase, [repo, queue], logger),
+      inject: ['ProductRepository', DeleteProductInOrderUseCase, 'Logger'],
     },
     {
       provide: GetProductUseCase,
