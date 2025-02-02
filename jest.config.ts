@@ -1,4 +1,6 @@
-module.exports = {
+import type { Config } from 'jest';
+
+const config: Config = {
   moduleNameMapper: {
     '^@application/(.*)$': '<rootDir>/src/application/$1',
     '^@domain/(.*)$': '<rootDir>/src/domain/$1',
@@ -18,6 +20,7 @@ module.exports = {
   testResultsProcessor: 'jest-sonar-reporter',
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '.',
+  verbose: true,
   testRegex: '.*\\.spec\\.ts$',
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
@@ -35,4 +38,7 @@ module.exports = {
     ],
   ],
   testEnvironment: 'node',
+  setupFilesAfterEnv: ['./jest.setup.ts'],
 };
+
+export default config;
