@@ -1,37 +1,129 @@
+import { ProductStatusEnum } from '@application/enums/product-status.enum';
 import { Logger } from '@application/interfaces/logger.interface';
-import { InactivateProductInOrderUseCase } from '@application/usecases/order/send/inactivate-product-in-order/inactivate-product-in-order.usecase';
-import { ProductNotFoundException } from '@domain/exceptions/product-not-found.exception';
+import { Product } from '@domain/entities/product';
+import { PageCollection } from '@domain/models/page-collection';
 import { ProductRepository } from '@domain/repositories/product.repository';
+import { GetProductPaginatedUseCase } from '../get-product-paginated/get-product-paginated.usecase';
 
-export class InactivateProductUseCase {
-  constructor(
-    private readonly productRepository: ProductRepository,
-    private readonly deleteProductInOrderUseCase: InactivateProductInOrderUseCase,
-    private readonly logger: Logger,
-  ) {}
+describe('GetProductPaginatedUseCase', () => {
+  let getProductPaginatedUseCase: GetProductPaginatedUseCase;
+  let mockProductRepository: jest.Mocked<ProductRepository>;
+  let mockLogger: jest.Mocked<Logger>;
 
-  async execute(id: string): Promise<void> {
-    try {
-      this.logger.log(`Delete product by id: ${id} started`);
+  beforeEach(() => {
+    mockProductRepository = {
+      findAllByCategory: jest.fn(),
+      findAll: jest.fn(),
+      create: jest.fn(),
+      delete: jest.fn(),
+      update: jest.fn(),
+      findById: jest.fn(),
+    } as unknown as jest.Mocked<ProductRepository>;
 
-      const product = await this.productRepository.findById(id);
+    mockLogger = {
+      log: jest.fn(),
+      error: jest.fn(),
+    } as unknown as jest.Mocked<Logger>;
 
-      if (!product) {
-        throw new ProductNotFoundException(id);
-      }
+    getProductPaginatedUseCase = new GetProductPaginatedUseCase(
+      mockProductRepository,
+      mockLogger,
+    );
+  });
 
-      await this.productRepository.inactivate(id);
-      this.logger.log(`Delete product with id ${id} successfully`);
+  it('should return a paginated collection of products', async () => {
+    const category = 'MAIN_COURSE';
+    const page = 1;
+    const size = 10;
 
-      this.deleteProductInOrderUseCase.execute(product);
-    } catch (error) {
-      this.logger.error(`Delete product with id: ${id} failed`);
+    const mockProducts: Product[] = [
+      new Product({
+        id: '1',
+        name: 'Product 1',
+        category: category,
+        price: 100,
+        description: 'Description 1',
+        status: ProductStatusEnum.ACTIVE,
+      }),
+    ];
 
-      if (error instanceof ProductNotFoundException) {
-        throw error;
-      }
+    const mockPageCollection = new PageCollection<Product>({
+      content: mockProducts,
+      totalElements: 1,
+      pageSize: size,
+      currentPage: page,
+    });
 
-      throw new Error(`Failed to execute usecase error: ${error}`);
-    }
-  }
-}
+    mockProductRepository.findAllByCategory.mockResolvedValue(
+      mockPageCollection,
+    );
+
+    const result = await getProductPaginatedUseCase.execute({
+      category,
+      page,
+      size,
+    });
+
+    expect(mockLogger.log).toHaveBeenCalledWith(
+      `Get products by Category: ${category}, Page: ${page}, Size: ${size} started`,
+    );
+    expect(mockProductRepository.findAllByCategory).toHaveBeenCalledWith({
+      category,
+      page,
+      size,
+      status: ProductStatusEnum.ACTIVE,
+    });
+    expect(result).toBe(mockPageCollection);
+  });
+
+  it('should return null if no products are found', async () => {
+    const category = 'MAIN_COURSE';
+    const page = 1;
+    const size = 10;
+
+    mockProductRepository.findAllByCategory.mockResolvedValue(null);
+
+    const result = await getProductPaginatedUseCase.execute({
+      category,
+      page,
+      size,
+    });
+
+    expect(mockLogger.log).toHaveBeenCalledWith(
+      `Get products by Category: ${category}, Page: ${page}, Size: ${size} started`,
+    );
+    expect(mockProductRepository.findAllByCategory).toHaveBeenCalledWith({
+      category,
+      page,
+      size,
+      status: ProductStatusEnum.ACTIVE,
+    });
+    expect(result).toBeNull();
+  });
+
+  it('should log an error and throw if fetching products fails', async () => {
+    const category = 'MAIN_COURSE';
+    const page = 1;
+    const size = 10;
+
+    const error = new Error('Database error');
+    mockProductRepository.findAllByCategory.mockRejectedValue(error);
+
+    await expect(
+      getProductPaginatedUseCase.execute({ category, page, size }),
+    ).rejects.toThrow(`Failed to execute usecase error: ${error}`);
+
+    expect(mockLogger.log).toHaveBeenCalledWith(
+      `Get products by Category: ${category}, Page: ${page}, Size: ${size} started`,
+    );
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      `Get products by Category: ${category}, Page: ${page}, Size: ${size} failed`,
+    );
+    expect(mockProductRepository.findAllByCategory).toHaveBeenCalledWith({
+      category,
+      page,
+      size,
+      status: ProductStatusEnum.ACTIVE,
+    });
+  });
+});
