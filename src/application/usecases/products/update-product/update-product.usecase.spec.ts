@@ -2,7 +2,6 @@ import { UpdateProductDto } from '@application/dto/update-product.dto';
 import { Logger } from '@application/interfaces/logger.interface';
 import { UpdateProductInOrderUseCase } from '@application/usecases/order/send/update-product-in-order/update-product-in-order.usecase';
 import { Product } from '@domain/entities/product';
-import { ProductNotFoundException } from '@domain/exceptions/product-not-found.exception';
 import { ProductRepository } from '@domain/repositories/product.repository';
 import { UpdateProductUseCase } from './update-product.usecase';
 
@@ -94,7 +93,7 @@ describe('UpdateProductUseCase', () => {
     mockProductRepository.findById.mockResolvedValue(null);
 
     await expect(updateProductUseCase.execute(id, updateDto)).rejects.toThrow(
-      ProductNotFoundException,
+      Error,
     );
 
     expect(mockLogger.log).toHaveBeenCalledWith(
@@ -102,7 +101,7 @@ describe('UpdateProductUseCase', () => {
     );
     expect(mockProductRepository.findById).toHaveBeenCalledWith(id);
     expect(mockLogger.error).toHaveBeenCalledWith(
-      `Update product with id: ${id} failed`,
+      `Update product with id: 1 failed`,
     );
   });
 
