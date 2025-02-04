@@ -15,7 +15,7 @@ describe('GetProductPaginatedUseCase', () => {
       findAllByCategory: jest.fn(),
       findAll: jest.fn(),
       create: jest.fn(),
-      delete: jest.fn(),
+      inactivate: jest.fn(),
       update: jest.fn(),
       findById: jest.fn(),
     } as unknown as jest.Mocked<ProductRepository>;

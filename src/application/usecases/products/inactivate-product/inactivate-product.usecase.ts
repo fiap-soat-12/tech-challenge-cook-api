@@ -6,13 +6,13 @@ import { ProductRepository } from '@domain/repositories/product.repository';
 export class InactivateProductUseCase {
   constructor(
     private readonly productRepository: ProductRepository,
-    private readonly deleteProductInOrderUseCase: InactivateProductInOrderUseCase,
+    private readonly inactivateProductInOrderUseCase: InactivateProductInOrderUseCase,
     private readonly logger: Logger,
   ) {}
 
   async execute(id: string): Promise<void> {
     try {
-      this.logger.log(`Delete product by id: ${id} started`);
+      this.logger.log(`Inactivate product by id: ${id} started`);
 
       const product = await this.productRepository.findById(id);
 
@@ -21,11 +21,11 @@ export class InactivateProductUseCase {
       }
 
       await this.productRepository.inactivate(id);
-      this.logger.log(`Delete product with id ${id} successfully`);
+      this.logger.log(`Inactivate product with id ${id} successfully`);
 
-      this.deleteProductInOrderUseCase.execute(product);
+      this.inactivateProductInOrderUseCase.execute(product);
     } catch (error) {
-      this.logger.error(`Delete product with id: ${id} failed`);
+      this.logger.error(`Inactivate product with id: ${id} failed`);
 
       if (error instanceof ProductNotFoundException) {
         throw error;
