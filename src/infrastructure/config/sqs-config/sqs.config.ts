@@ -1,4 +1,8 @@
-import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
+import {
+  ReceiveMessageCommand,
+  SQSClient,
+  SendMessageCommand,
+} from '@aws-sdk/client-sqs';
 
 export class SqsClient {
   private readonly client: SQSClient;
@@ -14,7 +18,7 @@ export class SqsClient {
     });
   }
 
-  async sendMessage(queueUrl: string, message: any): Promise<void> {
+  async sendMessage<T>(queueUrl: string, message: T): Promise<void> {
     const command = new SendMessageCommand({
       QueueUrl: queueUrl,
       MessageBody: JSON.stringify(message),
@@ -25,6 +29,26 @@ export class SqsClient {
       console.log(`Message sent to queue: ${queueUrl}`);
     } catch (error) {
       console.error(`Failed to send message to queue: ${error.message}`);
+      throw error;
+    }
+  }
+
+  async receiveMessages<T>(queueUrl: string): Promise<T | null> {
+    const command = new ReceiveMessageCommand({
+      QueueUrl: queueUrl,
+      MaxNumberOfMessages: 1,
+      WaitTimeSeconds: 20,
+    });
+
+    try {
+      const response = await this.client.send(command);
+      console.log(`Messages received from queue: ${queueUrl}`);
+      const messages = response.Messages || [];
+      return messages.length > 0
+        ? (JSON.parse(messages[0].Body as string) as T)
+        : null;
+    } catch (error) {
+      console.error(`Failed to receive messages from queue: ${error.message}`);
       throw error;
     }
   }

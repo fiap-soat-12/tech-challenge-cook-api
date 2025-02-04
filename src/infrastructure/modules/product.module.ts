@@ -27,6 +27,7 @@ import { LoggerModule } from './logger.module';
 import { MessagingModule } from './messaging.module';
 
 @Module({
+  imports: [DatabaseModule, LoggerModule, MessagingModule],
   controllers: [
     CreateProductController,
     GetProductController,
@@ -42,7 +43,6 @@ import { MessagingModule } from './messaging.module';
         new ProductPersistence(dbConnection, logger),
       inject: ['DatabaseConnection', 'Logger'],
     },
-
     // Message Usecases
     {
       provide: CreateProductInOrderUseCase,
@@ -62,7 +62,6 @@ import { MessagingModule } from './messaging.module';
         createWithLogger(InactivateProductInOrderUseCase, [sqs], logger),
       inject: ['ProductToInactivatePublisher', 'Logger'],
     },
-
     // Usecases
     {
       provide: CreateProductUseCase,
@@ -110,6 +109,5 @@ import { MessagingModule } from './messaging.module';
       inject: ['ProductRepository', 'Logger'],
     },
   ],
-  imports: [DatabaseModule, LoggerModule, MessagingModule],
 })
 export class ProductModule {}
