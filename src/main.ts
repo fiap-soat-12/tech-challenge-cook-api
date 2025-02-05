@@ -7,6 +7,10 @@ import { ConsoleLogger, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './infrastructure/modules/app.module';
 
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
 
@@ -16,6 +20,16 @@ async function bootstrap() {
       colors: true,
     }),
   });
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('DB_TYPE:', process.env.DB_TYPE);
+    console.log('DB_HOST:', process.env.DB_HOST);
+    console.log('DB_PORT:', process.env.DB_PORT);
+    console.log('DB_USERNAME:', process.env.DB_USERNAME);
+    console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
+    console.log('DB_DATABASE:', process.env.DB_DATABASE);
+  }
+
   app.setGlobalPrefix(GLOBAL_PREFIX);
   app.enableCors();
 
