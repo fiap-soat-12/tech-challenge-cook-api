@@ -16,10 +16,7 @@ export function setupSwagger(app: INestApplication) {
   - Wilton Souza - RM357991`;
 
   const packageJson = JSON.parse(
-    fs.readFileSync(
-      path.resolve(__dirname, '../../../../package.json'),
-      'utf-8',
-    ),
+    fs.readFileSync(path.resolve(__dirname, '../../../package.json'), 'utf-8'),
   );
 
   const config = new DocumentBuilder()
