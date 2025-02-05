@@ -13,7 +13,7 @@ export class CreateOrderProductListener implements MessageListener {
     private readonly logger: Logger,
     private readonly createOrderUseCase: CreateOrderProductUseCase,
   ) {
-    this.queueUrl = process.env.ORDER_PRODUCT_CREATE_QUEUE || '';
+    this.queueUrl = process.env.COOK_ORDER_CREATE_QUEUE || '';
     this.awsUrl = process.env.AWS_URL || '';
   }
 
