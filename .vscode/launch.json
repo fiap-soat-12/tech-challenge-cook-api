@@ -18,8 +18,8 @@
       "sourceMaps": true,
       "envFile": "${workspaceFolder}/.env",
       "autoAttachChildProcesses": true,
-      "outputCapture": "std", // Captura os logs de console e erros
-      "console": "integratedTerminal" // Usa o terminal integrado para logs
+      "outputCapture": "std",
+      "console": "integratedTerminal"
     },
     {
       "type": "node",
