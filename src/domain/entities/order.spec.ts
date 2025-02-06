@@ -1,38 +1,27 @@
 import { OrderStatusEnum } from '@application/enums/order-status.enum';
-import { ProductCategoryEnum } from '@application/enums/product-category.enum';
-import { ProductStatusEnum } from '@application/enums/product-status.enum';
 import { Order } from './order';
-import { Product } from './product';
+import { OrderProduct } from './order-product';
 
 describe('Order', () => {
-  const product = new Product({
-    id: '1',
-    name: 'Product 1',
-    price: 100,
-    category: ProductCategoryEnum.MAIN_COURSE,
-    description: 'Description 1',
-    status: ProductStatusEnum.ACTIVE,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
+  const product = new OrderProduct('1', 'customization');
 
   it('should create an order with valid properties', () => {
     const order = new Order({
       sequence: 1,
-      status: OrderStatusEnum.RECEIVED,
+      status: OrderStatusEnum.PREPARING,
       products: [product],
       createdAt: new Date(),
       updatedAt: new Date(),
     });
 
-    expect(order.status.getValue()).toBe(OrderStatusEnum.RECEIVED);
+    expect(order.status.getValue()).toBe(OrderStatusEnum.PREPARING);
     expect(order.products).toEqual([product]);
   });
 
   it('should set status to READY', () => {
     const order = new Order({
       sequence: 1,
-      status: OrderStatusEnum.RECEIVED,
+      status: OrderStatusEnum.PREPARING,
       products: [product],
     });
 
@@ -43,7 +32,7 @@ describe('Order', () => {
   it('should set status to FINISHED', () => {
     const order = new Order({
       sequence: 1,
-      status: OrderStatusEnum.RECEIVED,
+      status: OrderStatusEnum.PREPARING,
       products: [product],
     });
 
@@ -54,7 +43,7 @@ describe('Order', () => {
   it('should remove all products', () => {
     const order = new Order({
       sequence: 1,
-      status: OrderStatusEnum.RECEIVED,
+      status: OrderStatusEnum.PREPARING,
       products: [product],
     });
 
