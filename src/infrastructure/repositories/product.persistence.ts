@@ -63,10 +63,9 @@ export class ProductPersistence implements ProductRepository {
   }
 
   async create(product: Product): Promise<Product> {
-    const now = new Date();
     const query = `
       INSERT INTO product (name, category, price, description, status, created_at, updated_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
       RETURNING *
     `;
     const params = [
@@ -75,8 +74,6 @@ export class ProductPersistence implements ProductRepository {
       product.price.getValue(),
       product.description,
       product.status.getValue(),
-      now,
-      now,
     ];
 
     try {
@@ -124,11 +121,10 @@ export class ProductPersistence implements ProductRepository {
   }
 
   async update(product: Product): Promise<Product> {
-    const now = new Date();
     const query = `
       UPDATE product
-      SET name = $1, category = $2, price = $3, description = $4, updated_at = $5
-      WHERE id = $6
+      SET name = $1, category = $2, price = $3, description = $4, updated_at = NOW()
+      WHERE id = $5
       RETURNING *
     `;
     const params = [
@@ -136,7 +132,6 @@ export class ProductPersistence implements ProductRepository {
       product.category.getValue(),
       product.price.getValue(),
       product.description,
-      now,
       product.id,
     ];
 
