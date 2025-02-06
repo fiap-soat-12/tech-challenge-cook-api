@@ -1,21 +1,24 @@
 import { Logger } from '@application/interfaces/logger.interface';
 import { CreateOrderProductUseCase } from '@application/usecases/order/create-order/create-order.usecase';
 import { GetOrderByIdUseCase } from '@application/usecases/order/get-order-by-id/get-order-by-id.usecase';
+import { EvolveOrderUseCase } from '@application/usecases/order/send/evolve-order/evolve-order.usecase';
 import { UpdateOrderStatusUseCase } from '@application/usecases/order/update-order-status/update-order-status.usecase';
 import { GetProductByIdUseCase } from '@application/usecases/products/get-product-by-id/get-product-by-id.usecase';
 import { DatabaseConnection } from '@domain/interface/database-connection.interface';
 import { OrderRepository } from '@domain/repositories/order.repository';
 import { UpdateOrderStatusController } from '@infrastructure/entrypoint/controllers/update-order-status/update-order-status.controller';
+import { EvolveOrderPublisher } from '@infrastructure/entrypoint/publishers/evolve-order.publisher';
 import { OrderPersistence } from '@infrastructure/repositories/order.persistence';
 import { Module } from '@nestjs/common';
 import { createWithLogger } from '../config/create-with-logger/create-with-logger';
 import { DatabaseModule } from './database.module';
 import { LoggerModule } from './logger.module';
 import { ProductModule } from './product.module';
+import { PublisherModule } from './publisher.module';
 
 @Module({
   controllers: [UpdateOrderStatusController],
-  imports: [DatabaseModule, LoggerModule, ProductModule],
+  imports: [DatabaseModule, LoggerModule, ProductModule, PublisherModule],
   providers: [
     {
       provide: 'OrderRepository',
@@ -43,11 +46,21 @@ import { ProductModule } from './product.module';
         'Logger',
       ],
     },
+
+    {
+      provide: EvolveOrderUseCase,
+      useFactory: (sqs: EvolveOrderPublisher, logger: Logger) =>
+        createWithLogger(EvolveOrderUseCase, [sqs], logger),
+      inject: ['EvolveOrderPublisher', 'Logger'],
+    },
     {
       provide: UpdateOrderStatusUseCase,
-      useFactory: (repo: OrderRepository, logger: Logger) =>
-        createWithLogger(UpdateOrderStatusUseCase, [repo], logger),
-      inject: ['OrderRepository', 'Logger'],
+      useFactory: (
+        repo: OrderRepository,
+        queue: EvolveOrderUseCase,
+        logger: Logger,
+      ) => createWithLogger(UpdateOrderStatusUseCase, [repo, queue], logger),
+      inject: ['OrderRepository', EvolveOrderUseCase, 'Logger'],
     },
     {
       provide: GetOrderByIdUseCase,

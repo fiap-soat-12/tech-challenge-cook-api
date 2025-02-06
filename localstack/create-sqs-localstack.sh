@@ -10,6 +10,11 @@ aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name order-pro
 # -> Criação de pedidos na fila de produção
 aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name cook-order-create-queue
 
+# -> Evolui pedidos na fila de pedidos
+aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name order-status-update-queue
+
+
+
 # -> Lista filas criadas no localstack
 aws --endpoint-url=http://localhost:4566 sqs list-queues
 
