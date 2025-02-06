@@ -24,10 +24,9 @@ import { Module } from '@nestjs/common';
 import { createWithLogger } from '../config/create-with-logger/create-with-logger';
 import { DatabaseModule } from './database.module';
 import { LoggerModule } from './logger.module';
-import { MessagingModule } from './messaging.module';
-
+import { PublisherModule } from './publisher.module';
 @Module({
-  imports: [DatabaseModule, LoggerModule, MessagingModule],
+  imports: [DatabaseModule, LoggerModule, PublisherModule],
   controllers: [
     CreateProductController,
     GetProductController,

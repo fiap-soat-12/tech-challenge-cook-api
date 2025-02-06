@@ -24,5 +24,6 @@ import { LoggerModule } from './logger.module';
       inject: ['OrderRepository', 'Logger'],
     },
   ],
+  exports: [CreateOrderProductUseCase],
 })
 export class OrderModule {}
