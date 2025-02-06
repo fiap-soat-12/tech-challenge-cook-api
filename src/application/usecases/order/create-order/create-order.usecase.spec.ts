@@ -49,7 +49,7 @@ describe('CreateOrderProductUseCase', () => {
       id: '123' as UUID,
       sequence: 1,
       products: [{ id: 'prod1', customization: 'extra cheese' }],
-      status: OrderStatusEnum.RECEIVED,
+      status: OrderStatusEnum.PREPARING,
     };
 
     jest.spyOn(getOrderByIdUseCase, 'execute').mockResolvedValue(null);
@@ -72,7 +72,7 @@ describe('CreateOrderProductUseCase', () => {
       id: '123' as UUID,
       sequence: 1,
       products: [{ id: 'prod1', customization: 'extra cheese' }],
-      status: OrderStatusEnum.RECEIVED,
+      status: OrderStatusEnum.PREPARING,
     };
     jest
       .spyOn(getOrderByIdUseCase, 'execute')
@@ -86,7 +86,7 @@ describe('CreateOrderProductUseCase', () => {
       id: '123' as UUID,
       sequence: 1,
       products: [{ id: 'prod1', customization: 'extra cheese' }],
-      status: OrderStatusEnum.RECEIVED,
+      status: OrderStatusEnum.PREPARING,
     };
     jest.spyOn(getOrderByIdUseCase, 'execute').mockResolvedValue(null);
     jest.spyOn(getProductByIdUseCase, 'execute').mockResolvedValue(null);
@@ -101,7 +101,7 @@ describe('CreateOrderProductUseCase', () => {
       id: '123' as UUID,
       sequence: 1,
       products: [{ id: 'prod1', customization: 'extra cheese' }],
-      status: OrderStatusEnum.RECEIVED,
+      status: OrderStatusEnum.PREPARING,
     };
     const error = new Error('Unexpected error');
     jest.spyOn(getOrderByIdUseCase, 'execute').mockRejectedValue(error);
