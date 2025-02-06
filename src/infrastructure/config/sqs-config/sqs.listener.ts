@@ -3,14 +3,15 @@ import { SqsClient } from '@infrastructure/config/sqs-config/sqs.config';
 
 export abstract class SqsListener<T> {
   protected readonly queueUrl: string;
+  protected readonly sqsClient: SqsClient;
+  protected readonly logger: Logger;
 
-  constructor(
-    protected readonly sqsClient: SqsClient,
-    protected readonly logger: Logger,
-    private readonly queueName: string,
-  ) {
+  constructor(sqsClient: SqsClient, logger: Logger, queueUrl: string) {
     const awsUrl = process.env.AWS_URL || '';
-    this.queueUrl = `${awsUrl}/${this.queueName}`;
+
+    this.sqsClient = sqsClient;
+    this.logger = logger;
+    this.queueUrl = `${awsUrl}/${queueUrl}`;
   }
 
   async listen(): Promise<void> {
@@ -19,21 +20,21 @@ export abstract class SqsListener<T> {
     }
 
     while (true) {
-      try {
-        const messages = await this.sqsClient.receiveMessages<T>(this.queueUrl);
+      const messages = await this.sqsClient.receiveMessages<T>(this.queueUrl);
 
-        if (messages.length > 0) {
-          for (const msg of messages) {
+      if (messages.length > 0) {
+        for (const msg of messages) {
+          try {
             await this.handleMessage(msg.message);
-
-            await this.sqsClient.deleteMessage(
-              this.queueUrl,
-              msg.receiptHandles,
+          } catch (error) {
+            this.logger.error(
+              `Error processing message: ${error.message}`,
+              error.stack,
             );
           }
+
+          await this.sqsClient.deleteMessage(this.queueUrl, msg.receiptHandles);
         }
-      } catch (error) {
-        this.logger.error(`Error processing messages: ${error.message}`);
       }
     }
   }

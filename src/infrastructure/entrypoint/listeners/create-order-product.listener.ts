@@ -13,21 +13,26 @@ export class CreateOrderProductListener
 
   constructor(
     readonly sqsClient: SqsClient,
-    readonly logger: Logger,
     readonly createOrderUseCase: CreateOrderProductUseCase,
+    readonly logger: Logger,
   ) {
     super(sqsClient, logger, process.env.COOK_ORDER_CREATE_QUEUE || '');
   }
 
   onModuleInit() {
+    this.logger.log(`Start listening`);
     this.listen();
   }
 
-  protected async handleMessage(message: CreateOrderDto): Promise<void> {
+  async handleMessage(message: CreateOrderDto): Promise<void> {
     this.logger.log(
       `Received message: ${JSON.stringify(message)}`,
       CreateOrderProductListener.name,
     );
-    await this.createOrderUseCase.execute(message);
+    try {
+      await this.createOrderUseCase.execute(message);
+    } catch (error) {
+      this.logger.error(`Error processing message: ${error}`);
+    }
   }
 }

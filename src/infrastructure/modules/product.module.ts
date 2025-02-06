@@ -108,5 +108,6 @@ import { PublisherModule } from './publisher.module';
       inject: ['ProductRepository', 'Logger'],
     },
   ],
+  exports: [GetProductByIdUseCase],
 })
 export class ProductModule {}

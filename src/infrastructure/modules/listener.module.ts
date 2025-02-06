@@ -17,18 +17,17 @@ import { OrderModule } from './order.module';
     {
       provide: CreateOrderProductListener,
       useFactory: (
-        sqsClient: SqsClient,
-        logger: Logger,
+        sqs: SqsClient,
         createOrderUseCase: CreateOrderProductUseCase,
+        logger: Logger,
       ) =>
         createWithLogger(
           CreateOrderProductListener,
-          [sqsClient, createOrderUseCase],
+          [sqs, createOrderUseCase],
           logger,
         ),
-      inject: ['SqsClient', 'Logger', CreateOrderProductUseCase],
+      inject: ['SqsClient', CreateOrderProductUseCase, 'Logger'],
     },
   ],
-  exports: [CreateOrderProductListener],
 })
 export class ListenerModule {}
