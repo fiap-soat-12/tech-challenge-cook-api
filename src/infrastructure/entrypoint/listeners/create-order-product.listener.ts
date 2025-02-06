@@ -1,41 +1,30 @@
 import { CreateOrderDto } from '@application/dto/create-order.dto';
 import { Logger } from '@application/interfaces/logger.interface';
-import { MessageListener } from '@application/interfaces/message-listener.interface';
 import { CreateOrderProductUseCase } from '@application/usecases/order/create-order/create-order.usecase';
 import { SqsClient } from '@infrastructure/config/sqs-config/sqs.config';
+import { SqsListener } from '@infrastructure/config/sqs-config/sqs.listener';
+import { OnModuleInit } from '@nestjs/common';
 
-export class CreateOrderProductListener implements MessageListener {
-  private readonly queueUrl: string;
-  private readonly awsUrl: string;
+export class CreateOrderProductListener
+  extends SqsListener<CreateOrderDto>
+  implements OnModuleInit
+{
+  protected readonly queueUrl: string;
 
   constructor(
-    private readonly sqsClient: SqsClient,
-    private readonly logger: Logger,
-    private readonly createOrderUseCase: CreateOrderProductUseCase,
+    readonly sqsClient: SqsClient,
+    readonly logger: Logger,
+    readonly createOrderUseCase: CreateOrderProductUseCase,
   ) {
-    this.queueUrl = process.env.COOK_ORDER_CREATE_QUEUE || '';
-    this.awsUrl = process.env.AWS_URL || '';
+    super(sqsClient, logger, process.env.COOK_ORDER_CREATE_QUEUE || '');
   }
 
-  async listen(): Promise<void> {
-    if (!this.queueUrl || !this.awsUrl) {
-      throw new Error('Queue URL for Order Created not configured');
-    }
+  onModuleInit() {
+    this.listen();
+  }
 
-    try {
-      const message = await this.sqsClient.receiveMessages<CreateOrderDto>(
-        `${this.awsUrl}/${this.queueUrl}`,
-      );
-
-      if (message) {
-        const order: CreateOrderDto = message;
-        this.logger.log(
-          `Order created event received: ${JSON.stringify(order)}`,
-        );
-        await this.createOrderUseCase.execute(order);
-      }
-    } catch (error) {
-      this.logger.error(`Error receiving messages: ${error.message}`);
-    }
+  protected async handleMessage(message: CreateOrderDto): Promise<void> {
+    this.logger.log(`Received message: ${JSON.stringify(message)}`);
+    await this.createOrderUseCase.execute(message);
   }
 }

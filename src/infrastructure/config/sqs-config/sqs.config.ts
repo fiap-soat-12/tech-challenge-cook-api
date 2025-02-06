@@ -1,4 +1,5 @@
 import {
+  DeleteMessageCommand,
   ReceiveMessageCommand,
   SQSClient,
   SendMessageCommand,
@@ -33,22 +34,52 @@ export class SqsClient {
     }
   }
 
-  async receiveMessages<T>(queueUrl: string): Promise<T | null> {
+  async receiveMessages<T>(
+    queueUrl: string,
+  ): Promise<{ message: T; receiptHandles: string }[]> {
     const command = new ReceiveMessageCommand({
       QueueUrl: queueUrl,
-      MaxNumberOfMessages: 1,
+      MaxNumberOfMessages: 10,
       WaitTimeSeconds: 20,
     });
 
     try {
       const response = await this.client.send(command);
       console.log(`Messages received from queue: ${queueUrl}`);
+
       const messages = response.Messages || [];
-      return messages.length > 0
-        ? (JSON.parse(messages[0].Body as string) as T)
-        : null;
+
+      return messages.map((msg) => {
+        try {
+          return {
+            message: JSON.parse(msg.Body as string) as T,
+            receiptHandles: msg.ReceiptHandle as string,
+          };
+        } catch (error) {
+          const fixedMessage = msg.Body.replace(/(\w+):/g, '"$1":');
+          return {
+            message: JSON.parse(fixedMessage as string) as T,
+            receiptHandles: msg.ReceiptHandle as string,
+          };
+        }
+      });
     } catch (error) {
       console.error(`Failed to receive messages from queue: ${error.message}`);
+      throw error;
+    }
+  }
+
+  async deleteMessage(queueUrl: string, receiptHandle: string): Promise<void> {
+    const command = new DeleteMessageCommand({
+      QueueUrl: queueUrl,
+      ReceiptHandle: receiptHandle,
+    });
+
+    try {
+      await this.client.send(command);
+      console.log(`Message deleted from queue: ${queueUrl}`);
+    } catch (error) {
+      console.error(`Failed to delete message from queue: ${error.message}`);
       throw error;
     }
   }

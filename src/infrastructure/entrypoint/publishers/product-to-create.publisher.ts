@@ -15,13 +15,19 @@ export class ProductToCreatePublisher
   ) {
     this.queueUrl = process.env.ORDER_PRODUCT_CREATE_QUEUE || '';
     this.awsUrl = process.env.AWS_URL || '';
+
+    if (!this.queueUrl) {
+      throw new Error(
+        'ORDER_PRODUCT_CREATE_QUEUE environment variable is not set',
+      );
+    }
+
+    if (!this.awsUrl) {
+      throw new Error('AWS_URL environment variable is not set');
+    }
   }
 
   async publish(product: SendProductDto): Promise<void> {
-    if (!this.queueUrl || !this.awsUrl) {
-      throw new Error('Queue URL for Product Created not configured');
-    }
-
     try {
       await this.sqsClient.sendMessage(
         `${this.awsUrl}/${this.queueUrl}`,
@@ -31,7 +37,12 @@ export class ProductToCreatePublisher
         `Product created event published: ${JSON.stringify(product)}`,
       );
     } catch (error) {
-      this.logger.error(`Error receiving messages: ${error.message}`);
+      this.logger.error(
+        `Error publishing product created event: ${error.message}`,
+      );
+      throw new Error(
+        `Error publishing product created event: ${error.message}`,
+      );
     }
   }
 }
