@@ -3,7 +3,7 @@ import { Injectable, Logger as NestLogger } from '@nestjs/common';
 
 @Injectable()
 export class NestLoggerAdapter implements Logger {
-  private context = '';
+  private context?: string = 'Application';
   private readonly logger = new NestLogger();
 
   setContext(context: string): void {
