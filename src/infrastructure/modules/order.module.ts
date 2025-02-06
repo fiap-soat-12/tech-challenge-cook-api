@@ -1,7 +1,7 @@
 import { Logger } from '@application/interfaces/logger.interface';
 import { CreateOrderProductUseCase } from '@application/usecases/order/create-order/create-order.usecase';
 import { GetOrderByIdUseCase } from '@application/usecases/order/get-order-by-id/get-order-by-id.usecase';
-import { UpdateOrderToReadyUseCase } from '@application/usecases/order/update-order-to-ready/update-order-to-ready.usecase';
+import { UpdateOrderStatusUseCase } from '@application/usecases/order/update-order-status/update-order-status.usecase';
 import { GetProductByIdUseCase } from '@application/usecases/products/get-product-by-id/get-product-by-id.usecase';
 import { DatabaseConnection } from '@domain/interface/database-connection.interface';
 import { OrderRepository } from '@domain/repositories/order.repository';
@@ -44,9 +44,9 @@ import { ProductModule } from './product.module';
       ],
     },
     {
-      provide: UpdateOrderToReadyUseCase,
+      provide: UpdateOrderStatusUseCase,
       useFactory: (repo: OrderRepository, logger: Logger) =>
-        createWithLogger(UpdateOrderToReadyUseCase, [repo], logger),
+        createWithLogger(UpdateOrderStatusUseCase, [repo], logger),
       inject: ['OrderRepository', 'Logger'],
     },
     {

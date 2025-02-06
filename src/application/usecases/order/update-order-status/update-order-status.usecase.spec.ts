@@ -2,14 +2,14 @@ import { OrderStatusEnum } from '@application/enums/order-status.enum';
 import { Logger } from '@application/interfaces/logger.interface';
 import { Order } from '@domain/entities/order';
 import { OrderRepository } from '@domain/repositories/order.repository';
-import { UpdateOrderToReadyUseCase } from './update-order-to-ready.usecase';
+import { UpdateOrderStatusUseCase } from './update-order-status.usecase';
 
 jest.mock('@domain/repositories/order.repository');
 
-describe('UpdateOrderToReadyUseCase', () => {
+describe('UpdateOrderStatusUseCase', () => {
   let orderRepository: OrderRepository;
   let logger: Logger;
-  let useCase: UpdateOrderToReadyUseCase;
+  let useCase: UpdateOrderStatusUseCase;
 
   beforeEach(() => {
     orderRepository = {
@@ -21,7 +21,7 @@ describe('UpdateOrderToReadyUseCase', () => {
       error: jest.fn(),
     } as unknown as Logger;
 
-    useCase = new UpdateOrderToReadyUseCase(orderRepository, logger);
+    useCase = new UpdateOrderStatusUseCase(orderRepository, logger);
   });
 
   it('should update an order status to READY successfully', async () => {
@@ -35,7 +35,7 @@ describe('UpdateOrderToReadyUseCase', () => {
     jest.spyOn(orderRepository, 'findById').mockResolvedValue(existingOrder);
     jest.spyOn(orderRepository, 'updateStatus').mockResolvedValue(undefined);
 
-    const result = await useCase.execute(orderId);
+    const result = await useCase.execute(orderId, OrderStatusEnum.READY);
 
     expect(logger.log).toHaveBeenCalledWith(
       `Update order status to ready by id: ${orderId} started`,
@@ -55,7 +55,9 @@ describe('UpdateOrderToReadyUseCase', () => {
     const orderId = '123';
     jest.spyOn(orderRepository, 'findById').mockResolvedValue(null);
 
-    await expect(useCase.execute(orderId)).rejects.toThrow(Error);
+    await expect(
+      useCase.execute(orderId, OrderStatusEnum.READY),
+    ).rejects.toThrow(Error);
   });
 
   it('should log an error and throw if something goes wrong', async () => {
@@ -63,9 +65,9 @@ describe('UpdateOrderToReadyUseCase', () => {
     const error = new Error('Unexpected error');
     jest.spyOn(orderRepository, 'findById').mockRejectedValue(error);
 
-    await expect(useCase.execute(orderId)).rejects.toThrowError(
-      `Failed to execute usecase error: ${error}`,
-    );
+    await expect(
+      useCase.execute(orderId, OrderStatusEnum.READY),
+    ).rejects.toThrowError(`Failed to execute usecase error: ${error}`);
     expect(logger.error).toHaveBeenCalledWith(
       `Update order status to ready with id: ${orderId} failed`,
     );

@@ -1,10 +1,10 @@
 import { Logger } from '@application/interfaces/logger.interface';
+import { OrderStatusType } from '@application/types/order-status.type';
 import { Order } from '@domain/entities/order';
 import { OrderNotFoundException } from '@domain/exceptions/order-not-found.exception';
 import { OrderRepository } from '@domain/repositories/order.repository';
-import { OrderStatusType } from '@application/types/order-status.type';
 
-export class UpdateOrderToReadyUseCase {
+export class UpdateOrderStatusUseCase {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly logger: Logger,

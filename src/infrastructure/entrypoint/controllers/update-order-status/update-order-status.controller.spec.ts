@@ -1,6 +1,6 @@
 import { OrderStatusEnum } from '@application/enums/order-status.enum';
 import { UUID } from '@application/types/UUID.type';
-import { UpdateOrderToReadyUseCase } from '@application/usecases/order/update-order-to-ready/update-order-to-ready.usecase';
+import { UpdateOrderStatusUseCase } from '@application/usecases/order/update-order-status/update-order-status.usecase';
 import { OrderNotFoundException } from '@domain/exceptions/order-not-found.exception';
 import { HttpException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -8,14 +8,14 @@ import { UpdateOrderStatusController } from './update-order-status.controller';
 
 describe('UpdateOrderStatusController', () => {
   let controller: UpdateOrderStatusController;
-  let useCase: UpdateOrderToReadyUseCase;
+  let useCase: UpdateOrderStatusUseCase;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UpdateOrderStatusController],
       providers: [
         {
-          provide: UpdateOrderToReadyUseCase,
+          provide: UpdateOrderStatusUseCase,
           useValue: {
             execute: jest.fn(),
           },
@@ -26,7 +26,7 @@ describe('UpdateOrderStatusController', () => {
     controller = module.get<UpdateOrderStatusController>(
       UpdateOrderStatusController,
     );
-    useCase = module.get<UpdateOrderToReadyUseCase>(UpdateOrderToReadyUseCase);
+    useCase = module.get<UpdateOrderStatusUseCase>(UpdateOrderStatusUseCase);
   });
 
   it('should be defined', () => {

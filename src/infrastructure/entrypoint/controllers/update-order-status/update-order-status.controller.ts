@@ -1,6 +1,6 @@
 import { OrderStatusEnum } from '@application/enums/order-status.enum';
 import { UUID } from '@application/types/UUID.type';
-import { UpdateOrderToReadyUseCase } from '@application/usecases/order/update-order-to-ready/update-order-to-ready.usecase';
+import { UpdateOrderStatusUseCase } from '@application/usecases/order/update-order-status/update-order-status.usecase';
 import { OrderNotFoundException } from '@domain/exceptions/order-not-found.exception';
 import { Erros4xx5xxResponse } from '@infrastructure/entrypoint/response/errors-4xx-5xx.response';
 import { UUIDValidationPipe } from '@infrastructure/entrypoint/validators/null-or-valid-uuid/null-or-valid-uuid.validator';
@@ -17,7 +17,7 @@ import {
 @ApiBearerAuth('Authorization')
 @Controller('orders')
 export class UpdateOrderStatusController {
-  constructor(private readonly usecase: UpdateOrderToReadyUseCase) {}
+  constructor(private readonly usecase: UpdateOrderStatusUseCase) {}
 
   @Patch(':id/status/:status')
   @ApiOperation({ summary: 'Update Order Status' })
