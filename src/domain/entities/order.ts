@@ -4,9 +4,9 @@ import { OrderProduct } from './order-product';
 
 interface OrderProps {
   id?: string;
-  sequence: number;
-  status: OrderStatusType;
   products: OrderProduct[];
+  status: OrderStatusType;
+  sequence: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
