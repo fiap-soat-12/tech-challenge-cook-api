@@ -99,7 +99,6 @@ export class OrderPersistence implements OrderRepository {
   }
 
   async create(order: Order): Promise<Order> {
-    const now = new Date();
     const orderQuery = `
       INSERT INTO cook_order (id, sequence, status, created_at, updated_at)
       VALUES ($1, $2, $3, NOW(), NOW())
@@ -121,6 +120,8 @@ export class OrderPersistence implements OrderRepository {
         id: orderId,
         sequence: orderSequence,
         status: orderStatus,
+        createdAt,
+        updatedAt,
       } = orderResult[0];
 
       await this.insertOrderProducts(orderId, order.products);
@@ -132,8 +133,8 @@ export class OrderPersistence implements OrderRepository {
         products: order.products.map(
           (product) => new OrderProduct(product.id, product.customization),
         ),
-        createdAt: now,
-        updatedAt: now,
+        createdAt,
+        updatedAt,
       });
     } catch (error) {
       this.logger.error(
