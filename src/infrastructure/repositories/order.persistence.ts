@@ -1,4 +1,5 @@
 import { Logger } from '@application/interfaces/logger.interface';
+import { OrderStatusType } from '@application/types/order-status.type';
 import { UUID } from '@application/types/UUID.type';
 import { Order } from '@domain/entities/order';
 import { OrderProduct } from '@domain/entities/order-product';
@@ -13,6 +14,39 @@ export class OrderPersistence implements OrderRepository {
     private readonly connection: DatabaseConnection,
     private readonly logger: Logger,
   ) {}
+
+  async updateStatus(id: UUID, status: OrderStatusType): Promise<Order | null> {
+    const query = `
+      UPDATE cook_order
+      SET status = $2, updated_at = NOW()
+      WHERE id = $1
+      RETURNING *
+    `;
+    const params = [id, status];
+
+    try {
+      const resultOrder = await this.connection.query<OrderEntity>(
+        query,
+        params,
+      );
+
+      if (!resultOrder || !resultOrder.length) {
+        return null;
+      }
+
+      const result = resultOrder[0];
+
+      return await this.findById(result.id);
+    } catch (error) {
+      this.logger.error(
+        `Error updating order status persist query: ${query}, params: ${params}`,
+        error,
+      );
+      throw new OrderPersistenceError(
+        `Failed to update Order status with id ${id}`,
+      );
+    }
+  }
 
   async findById(id: UUID): Promise<Order | null> {
     const query = `
@@ -68,16 +102,10 @@ export class OrderPersistence implements OrderRepository {
     const now = new Date();
     const orderQuery = `
       INSERT INTO cook_order (id, sequence, status, created_at, updated_at)
-      VALUES ($1, $2, $3, $4, $5)
+      VALUES ($1, $2, $3, NOW(), NOW())
       RETURNING *
     `;
-    const orderParams = [
-      order.id,
-      order.sequence,
-      order.status.getValue(),
-      now,
-      now,
-    ];
+    const orderParams = [order.id, order.sequence, order.status.getValue()];
 
     try {
       const orderResult = await this.connection.query<OrderEntity>(
