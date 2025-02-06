@@ -24,7 +24,10 @@ export class CreateOrderProductListener
   }
 
   protected async handleMessage(message: CreateOrderDto): Promise<void> {
-    this.logger.log(`Received message: ${JSON.stringify(message)}`);
+    this.logger.log(
+      `Received message: ${JSON.stringify(message)}`,
+      CreateOrderProductListener.name,
+    );
     await this.createOrderUseCase.execute(message);
   }
 }
