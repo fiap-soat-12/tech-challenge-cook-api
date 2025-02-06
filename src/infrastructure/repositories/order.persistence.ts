@@ -1,4 +1,5 @@
 import { Logger } from '@application/interfaces/logger.interface';
+import { UUID } from '@application/types/UUID.type';
 import { Order } from '@domain/entities/order';
 import { OrderProduct } from '@domain/entities/order-product';
 import { OrderPersistenceError } from '@domain/exceptions/order-persistence.error';
@@ -13,14 +14,70 @@ export class OrderPersistence implements OrderRepository {
     private readonly logger: Logger,
   ) {}
 
+  async findById(id: UUID): Promise<Order | null> {
+    const query = `
+      SELECT
+        o.id,
+        o.sequence,
+        o.status,
+        o.created_at,
+        o.updated_at,
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'id', op.id,
+              'customization', op.customization
+            )
+          ) FILTER (WHERE op.id IS NOT NULL), '[]'
+        ) AS products
+      FROM cook_order o
+      LEFT JOIN order_product op ON o.id = op.order_id
+      WHERE o.id = $1
+      GROUP BY o.id
+    `;
+
+    try {
+      const resultOrder = await this.connection.query<OrderEntity>(query, [id]);
+
+      if (!resultOrder || !resultOrder.length) {
+        return null;
+      }
+
+      const result = resultOrder[0];
+
+      return new Order({
+        id: result.id,
+        sequence: result.sequence,
+        status: result.status,
+        products: result.products.map(
+          (product) => new OrderProduct(product.id, product.customization),
+        ),
+        createdAt: result.createdAt,
+        updatedAt: result.updatedAt,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Error updating order persist query: ${query}, params: ${id}`,
+        error,
+      );
+      throw new OrderPersistenceError(`Failed to fetch Order with id ${id}`);
+    }
+  }
+
   async create(order: Order): Promise<Order> {
     const now = new Date();
     const orderQuery = `
-      INSERT INTO orders (sequence, status, created_at, updated_at)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO cook_order (id, sequence, status, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING *
     `;
-    const orderParams = [order.sequence, order.status.getValue(), now, now];
+    const orderParams = [
+      order.id,
+      order.sequence,
+      order.status.getValue(),
+      now,
+      now,
+    ];
 
     try {
       const orderResult = await this.connection.query<OrderEntity>(
