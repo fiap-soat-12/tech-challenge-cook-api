@@ -152,8 +152,8 @@ export class OrderPersistence implements OrderRepository {
   ): Promise<void> {
     const orderProductQueries = products.map((product) => {
       const productQuery = `
-        INSERT INTO order_product (order_id, product_id, customization)
-        VALUES ($1, $2, $3)
+        INSERT INTO order_product (order_id, product_id, customization, created_at)
+        VALUES ($1, $2, $3, NOW())
       `;
       const productParams = [orderId, product.id, product.customization];
       return this.connection.query<OrderProductEntity>(
