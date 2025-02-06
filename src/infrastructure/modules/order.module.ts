@@ -4,6 +4,7 @@ import { GetOrderByIdUseCase } from '@application/usecases/order/get-order-by-id
 import { GetProductByIdUseCase } from '@application/usecases/products/get-product-by-id/get-product-by-id.usecase';
 import { DatabaseConnection } from '@domain/interface/database-connection.interface';
 import { OrderRepository } from '@domain/repositories/order.repository';
+import { UpdateOrderStatusController } from '@infrastructure/entrypoint/controllers/update-order-status/update-order-status.controller';
 import { OrderPersistence } from '@infrastructure/repositories/order.persistence';
 import { Module } from '@nestjs/common';
 import { createWithLogger } from '../config/create-with-logger/create-with-logger';
@@ -12,6 +13,7 @@ import { LoggerModule } from './logger.module';
 import { ProductModule } from './product.module';
 
 @Module({
+  controllers: [UpdateOrderStatusController],
   imports: [DatabaseModule, LoggerModule, ProductModule],
   providers: [
     {
