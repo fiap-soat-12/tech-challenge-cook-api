@@ -13,7 +13,10 @@ import {
 } from 'class-validator';
 
 export class UpdateProductRequest {
-  @ApiProperty({ example: 'Pizza', description: 'The name of the product' })
+  @ApiProperty({
+    example: 'Cheese Hamburger',
+    description: 'Name of the product',
+  })
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
@@ -21,7 +24,7 @@ export class UpdateProductRequest {
 
   @ApiProperty({
     example: 'MAIN_COURSE',
-    description: 'The category of the product',
+    description: 'Category of the product',
   })
   @IsEnum(ProductCategoryEnum, {
     message: `category must be one of ${Object.values(ProductCategoryEnum).join(', ')}`,
@@ -34,7 +37,7 @@ export class UpdateProductRequest {
   price: number;
 
   @ApiProperty({
-    example: 'Delicious margherita pizza',
+    example: 'Hamburger with Cheese',
     description: 'Description of the product',
   })
   @IsString()

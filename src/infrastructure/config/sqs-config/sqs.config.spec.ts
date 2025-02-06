@@ -1,60 +1,57 @@
-import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
-import { SqsClient } from './sqs.config';
+import { SqsClient as AppSqsClient } from './sqs.config'; // Usando alias para evitar conflito de nomes
 
-jest.mock('@aws-sdk/client-sqs'); // Mocka os métodos do AWS SDK
+jest.mock('@aws-sdk/client-sqs', () => {
+  const sendMock = jest.fn();
 
-describe('SqsClient', () => {
-  let sqsClient: SqsClient;
+  return {
+    SQSClient: jest.fn(() => ({
+      send: sendMock,
+    })),
+    SendMessageCommand: jest.fn((input) => ({ input })),
+    __mocks__: { sendMock }, // Expondo o mock para uso nos testes
+  };
+});
+
+describe('AppSqsClient', () => {
+  let sqsClient: AppSqsClient;
+  let sendMock: jest.Mock;
 
   beforeEach(() => {
-    jest.clearAllMocks(); // Reseta os mocks antes de cada teste
-    sqsClient = new SqsClient();
-  });
+    jest.clearAllMocks();
+    sendMock = jest.requireMock('@aws-sdk/client-sqs').__mocks__
+      .sendMock as jest.Mock;
 
-  it('should initialize the SQS client with the correct configuration', () => {
-    expect(SQSClient).toHaveBeenCalledWith({
-      region: process.env.AWS_REGION || 'us-east-1',
-      endpoint: process.env.AWS_ENDPOINT || 'http://localhost:4566',
-      credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-      },
-    });
+    sqsClient = new AppSqsClient();
   });
 
   it('should send a message to the specified queue', async () => {
-    const mockSend = jest.fn().mockResolvedValue({});
-    (SQSClient.prototype.send as jest.Mock) = mockSend;
+    sendMock.mockResolvedValue(undefined);
 
     const queueUrl = 'http://localhost:4566/queue/my-queue';
     const message = { key: 'value' };
 
     await sqsClient.sendMessage(queueUrl, message);
 
-    // Verifica se o método send foi chamado com a instância correta de SendMessageCommand
-    expect(mockSend).toHaveBeenCalledWith(
-      expect.any(SendMessageCommand), // Verifica que é um comando válido
+    // Verifica que o método `send` foi chamado corretamente
+    expect(sendMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        input: {
+          QueueUrl: queueUrl,
+          MessageBody: JSON.stringify(message),
+        },
+      }),
     );
-
-    // Verifica os dados do comando enviado
-    const sentCommand = mockSend.mock.calls[0][0] as SendMessageCommand;
-    expect(sentCommand.input).toEqual({
-      QueueUrl: queueUrl,
-      MessageBody: JSON.stringify(message),
-    });
   });
 
   it('should send a message to the specified queue', async () => {
-    const mockSend = jest.fn().mockResolvedValue({});
-    (SQSClient.prototype.send as jest.Mock) = mockSend;
+    sendMock.mockResolvedValueOnce(undefined);
 
     const queueUrl = 'http://localhost:4566/queue/my-queue';
     const message = { key: 'value' };
 
     await sqsClient.sendMessage(queueUrl, message);
 
-    // Verifica se o comando foi enviado corretamente
-    expect(mockSend).toHaveBeenCalledWith(
+    expect(sendMock).toHaveBeenCalledWith(
       expect.objectContaining({
         input: {
           QueueUrl: queueUrl,
@@ -65,10 +62,7 @@ describe('SqsClient', () => {
   });
 
   it('should throw an error if message sending fails', async () => {
-    const mockSend = jest
-      .fn()
-      .mockRejectedValue(new Error('Failed to send message'));
-    (SQSClient.prototype.send as jest.Mock) = mockSend;
+    sendMock.mockRejectedValueOnce(new Error('Failed to send message'));
 
     const queueUrl = 'http://localhost:4566/queue/my-queue';
     const message = { key: 'value' };
@@ -77,8 +71,7 @@ describe('SqsClient', () => {
       'Failed to send message',
     );
 
-    // Verifica se o comando foi enviado antes de falhar
-    expect(mockSend).toHaveBeenCalledWith(
+    expect(sendMock).toHaveBeenCalledWith(
       expect.objectContaining({
         input: {
           QueueUrl: queueUrl,

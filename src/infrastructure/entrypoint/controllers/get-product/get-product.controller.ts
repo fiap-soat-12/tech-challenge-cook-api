@@ -12,13 +12,18 @@ import { GetProductResponse } from '../../response/get-product.response';
 @ApiBearerAuth('Authorization')
 @Controller('products')
 export class GetProductController {
-  constructor(private readonly createUserUseCase: GetProductUseCase) {}
+  constructor(private readonly getProductUseCase: GetProductUseCase) {}
 
   @ApiOperation({ summary: 'Find a Product By Category' })
-  @ApiResponse({ status: 200, description: 'Products retrieved successfully.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Products retrieved successfully.',
+    type: GetProductResponse,
+    isArray: true,
+  })
   @Get()
   async getProducts(): Promise<GetProductResponse[]> {
-    const products = await this.createUserUseCase.execute();
+    const products = await this.getProductUseCase.execute();
 
     try {
       const response: GetProductResponse[] = products.map((value) => {

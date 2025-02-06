@@ -26,23 +26,43 @@ export class GetProductPaginatedController {
 
   @Get('/category')
   @ApiOperation({ summary: 'Find a Product By Category' })
-  @ApiResponse({ status: 200, description: 'Products retrieved successfully.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Products retrieved successfully.',
+    schema: {
+      example: {
+        content: [
+          {
+            id: '7901cbdc-2d24-4faf-aadd-995a7bcc6b5b',
+            name: 'Hambúrguer Clássico',
+            category: 'MAIN_COURSE',
+            description: 'Hambúrguer com carne bovina, queijo e salada',
+            price: '30.00',
+          },
+        ],
+        currentPage: 0,
+        pageSize: 1,
+        totalElements: 31,
+        totalPages: 31,
+      },
+    },
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async getProductsPaginated(
     @Query() query: GetProductsQueryRequest,
     @Res() res: Response<PaginatedResponseDto<GetProductResponse>>,
   ) {
-    const productPaginated = await this.usecase.execute({
-      page: Number(query.page),
-      size: Number(query.size),
-      category: query.category,
-    });
-
-    if (!productPaginated) {
-      res.status(HttpStatus.NO_CONTENT).send();
-    }
-
     try {
+      const productPaginated = await this.usecase.execute({
+        page: Number(query.page),
+        size: Number(query.size),
+        category: query.category,
+      });
+
+      if (!productPaginated) {
+        return res.status(HttpStatus.NO_CONTENT).send();
+      }
+
       const products: GetProductResponse[] = productPaginated.content.map(
         (value) =>
           new GetProductResponse({
@@ -61,7 +81,6 @@ export class GetProductPaginatedController {
         totalElements: productPaginated.totalElements,
         totalPages: productPaginated.totalPages,
       });
-      return;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

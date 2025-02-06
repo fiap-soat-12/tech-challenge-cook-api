@@ -1,14 +1,19 @@
 # -> Cria produtos na base de pedidos
 aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name order-product-create-queue
-aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name order-product-create-accept-queue
 
 # -> Exclui produtos na base de pedidos
 aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name order-product-delete-queue
-aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name order-product-delete-accept-queue
 
 # -> Atualiza produtos na base de pedidos
 aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name order-product-update-queue
-aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name order-product-update-accept-queue
+
+# -> Criação de pedidos na fila de produção
+aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name cook-order-create-queue
+
+# -> Evolui pedidos na fila de pedidos
+aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name order-status-update-queue
+
+
 
 # -> Lista filas criadas no localstack
 aws --endpoint-url=http://localhost:4566 sqs list-queues

@@ -1,4 +1,5 @@
 import { CreateProductUseCase } from '@application/usecases/products/create-product/create-product.usecase';
+import { Erros4xx5xxResponse } from '@infrastructure/entrypoint/response/errors-4xx-5xx.response';
 import { Body, Controller, Post } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -16,7 +17,21 @@ export class CreateProductController {
   constructor(private readonly createUserUseCase: CreateProductUseCase) {}
 
   @ApiOperation({ summary: 'Register a Product' })
-  @ApiResponse({ status: 201, description: 'Product successfully created.' })
+  @ApiResponse({
+    status: 201,
+    description: 'Product successfully created.',
+    type: GetProductResponse,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request',
+    type: Erros4xx5xxResponse,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal Server Error',
+    type: Erros4xx5xxResponse,
+  })
   @Post()
   async createUser(
     @Body() request: CreateProductRequest,

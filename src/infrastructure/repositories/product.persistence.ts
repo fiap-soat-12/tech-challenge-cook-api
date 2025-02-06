@@ -1,4 +1,5 @@
 import { Logger } from '@application/interfaces/logger.interface';
+import { ProductStatusType } from '@application/types/product-status.type';
 import { Product } from '@domain/entities/product';
 import { ProductPersistenceError } from '@domain/exceptions/product-persistence-error.exception';
 import { DatabaseConnection } from '@domain/interface/database-connection.interface';
@@ -16,20 +17,23 @@ export class ProductPersistence implements ProductRepository {
     category,
     page,
     size,
+    status,
   }: {
     category: string;
     page: number;
     size: number;
+    status: ProductStatusType;
   }): Promise<PageCollection<Product> | null> {
     const query = `
       SELECT * FROM product
       WHERE category = $1
+      AND status = $2
     `;
 
     const { content, currentPage, pageSize, totalElements } =
       await this.connection.queryPaginate<ProductEntity>({
         statement: query,
-        params: [category],
+        params: [category, status],
         page: page,
         size: size,
       });
@@ -38,19 +42,30 @@ export class ProductPersistence implements ProductRepository {
       return null;
     }
 
-    return new PageCollection({
+    return new PageCollection<Product>({
       currentPage,
       pageSize,
       totalElements,
-      content: content.map((value) => new Product({ ...value })),
+      content: content.map(
+        (value) =>
+          new Product({
+            category: value.category,
+            description: value.description,
+            name: value.name,
+            price: value.price,
+            status: value.status,
+            createdAt: value.createdAt,
+            id: value.id,
+            updatedAt: value.updatedAt,
+          }),
+      ),
     });
   }
 
   async create(product: Product): Promise<Product> {
-    const now = new Date();
     const query = `
       INSERT INTO product (name, category, price, description, status, created_at, updated_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
       RETURNING *
     `;
     const params = [
@@ -59,8 +74,6 @@ export class ProductPersistence implements ProductRepository {
       product.price.getValue(),
       product.description,
       product.status.getValue(),
-      now,
-      now,
     ];
 
     try {
@@ -80,34 +93,38 @@ export class ProductPersistence implements ProductRepository {
     }
   }
 
-  async delete(id: string): Promise<Product> {
-    const query = `DELETE FROM product WHERE id = $1 RETURNING *`;
-    const params = [id];
+  async inactivate(id: string): Promise<Product> {
+    const now = new Date();
+    const query = `
+      UPDATE product
+      SET status = 'INACTIVE', updated_at = $2
+      WHERE id = $1
+      RETURNING *
+    `;
+    const params = [id, now];
 
     try {
       const result = await this.connection.query<ProductEntity>(query, params);
 
       if (!result) {
-        throw new Error('Failed to delete Product');
+        throw new Error('Failed to update Product');
       }
 
       return new Product(result[0]);
     } catch (error) {
       this.logger.error(
-        `Error deleting product persist query: ${query}, params: ${params}`,
+        `Error updating product persist query: ${query}, params: ${params}`,
         error,
       );
-
-      throw new ProductPersistenceError('Failed to delete Product');
+      throw new ProductPersistenceError('Failed to update Product');
     }
   }
 
   async update(product: Product): Promise<Product> {
-    const now = new Date();
     const query = `
       UPDATE product
-      SET name = $1, category = $2, price = $3, description = $4, updated_at = $5
-      WHERE id = $6
+      SET name = $1, category = $2, price = $3, description = $4, updated_at = NOW()
+      WHERE id = $5
       RETURNING *
     `;
     const params = [
@@ -115,7 +132,6 @@ export class ProductPersistence implements ProductRepository {
       product.category.getValue(),
       product.price.getValue(),
       product.description,
-      now,
       product.id,
     ];
 

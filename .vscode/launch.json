@@ -17,7 +17,9 @@
       "protocol": "inspector",
       "sourceMaps": true,
       "envFile": "${workspaceFolder}/.env",
-      "autoAttachChildProcesses": true
+      "autoAttachChildProcesses": true,
+      "outputCapture": "std",
+      "console": "integratedTerminal"
     },
     {
       "type": "node",

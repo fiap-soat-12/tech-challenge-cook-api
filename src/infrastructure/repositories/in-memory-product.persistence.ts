@@ -1,3 +1,4 @@
+import { ProductStatusType } from '@application/types/product-status.type';
 import { Product } from '@domain/entities/product';
 import { PageCollection } from '@domain/models/page-collection';
 import { ProductRepository } from '@domain/repositories/product.repository';
@@ -15,11 +16,12 @@ export class InMemoryProductRepository implements ProductRepository {
     return [...this.products];
   }
 
-  async create(product: Product): Promise<void> {
+  async create(product: Product): Promise<Product> {
     this.products.push(product);
+    return product;
   }
 
-  async delete(id: string): Promise<void> {
+  async inactivate(id: string): Promise<Product> {
     const index = this.products.findIndex((product) => product.id === id);
 
     if (index === -1) {
@@ -27,6 +29,7 @@ export class InMemoryProductRepository implements ProductRepository {
     }
 
     this.products.splice(index, 1);
+    return null;
   }
 
   async update(product: Product): Promise<Product> {
@@ -43,6 +46,7 @@ export class InMemoryProductRepository implements ProductRepository {
 
   async findAllByCategory(options: {
     category: string;
+    status: ProductStatusType;
     page: number;
     size: number;
   }): Promise<PageCollection<Product> | null> {

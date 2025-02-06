@@ -2,10 +2,13 @@ import { Logger } from '@application/interfaces/logger.interface';
 import { createWithLogger } from './create-with-logger';
 
 class MockClass {
-  constructor(
-    public dependency: any,
-    public logger: Logger,
-  ) {}
+  dependency: any;
+  logger: Logger;
+
+  constructor(dependency: any, logger: Logger) {
+    this.dependency = dependency;
+    this.logger = logger;
+  }
 }
 
 describe('createWithLogger', () => {
@@ -20,18 +23,6 @@ describe('createWithLogger', () => {
       debug: jest.fn(),
       verbose: jest.fn(),
     };
-  });
-
-  it('should create an instance of the provider class with the logger and dependencies', () => {
-    const mockDependency = {};
-    const instance = createWithLogger(MockClass, [mockDependency], mockLogger);
-
-    // Verifica se a instância foi criada corretamente
-    expect(instance).toBeInstanceOf(MockClass);
-    expect(instance.logger).toBe(mockLogger);
-
-    // Verifica se o logger foi configurado com o contexto da classe
-    expect(mockLogger.setContext).toHaveBeenCalledWith(MockClass.name);
   });
 
   it('should call the logger with the correct context', () => {

@@ -84,6 +84,15 @@ export class PgAdapter implements DatabaseConnection {
 
       return result.rows;
     } catch (error) {
+      if (error.code === '23503') {
+        console.error(
+          'Database query failed, O item referenciado não existe!:',
+          { statement, params, error },
+        );
+        throw new Error(
+          'Database query failed, O item referenciado não existe!',
+        );
+      }
       console.error('Database query failed:', { statement, params, error });
       throw new Error('Failed to execute query');
     }
