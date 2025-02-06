@@ -52,7 +52,7 @@ export class SqsClient {
       return messages.map((msg) => {
         try {
           return {
-            message: JSON.parse(msg.Body as string) as T,
+            message: JSON.parse(msg.Body) as T,
             receiptHandles: msg.ReceiptHandle as string,
           };
         } catch (error) {
