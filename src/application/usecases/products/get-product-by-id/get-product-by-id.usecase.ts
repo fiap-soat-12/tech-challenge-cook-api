@@ -22,6 +22,11 @@ export class GetProductByIdUseCase {
       return product;
     } catch (error) {
       this.logger.error(`Get product with id: ${id} failed`);
+
+      if (error instanceof ProductNotFoundException) {
+        throw error;
+      }
+
       throw new Error(`Failed to execute usecase error: ${error}`);
     }
   }
