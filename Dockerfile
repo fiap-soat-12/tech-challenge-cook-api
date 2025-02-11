@@ -1,29 +1,63 @@
-# Etapa 1: Construção da Aplicação
 FROM node:20-alpine AS build
 
-# Define diretório de trabalho
 WORKDIR /app
 
-# Copia apenas os arquivos necessários para instalar dependências primeiro
+# Define argumentos de build
+ARG DB_TYPE
+ARG DB_USER
+ARG DB_HOST
+ARG DB_NAME
+ARG DB_PASSWORD
+ARG DB_PORT
+ARG TZ
+ARG AWS_REGION
+ARG ORDER_PRODUCT_CREATE_QUEUE
+ARG ORDER_PRODUCT_CREATE_ACCEPT_QUEUE
+ARG ORDER_PRODUCT_DELETE_QUEUE
+ARG ORDER_PRODUCT_DELETE_ACCEPT_QUEUE
+ARG ORDER_PRODUCT_UPDATE_QUEUE
+ARG ORDER_PRODUCT_UPDATE_ACCEPT_QUEUE
+ARG COOK_ORDER_CREATE_QUEUE
+ARG ORDER_STATUS_UPDATE_QUEUE
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
+ARG AWS_ENDPOINT
+ARG AWS_URL
+
+# Define variáveis de ambiente usando os argumentos recebidos
+ENV DB_TYPE=$DB_TYPE \
+    DB_USER=$DB_USER \
+    DB_HOST=$DB_HOST \
+    DB_NAME=$DB_NAME \
+    DB_PASSWORD=$DB_PASSWORD \
+    DB_PORT=$DB_PORT \
+    TZ=$TZ \
+    AWS_REGION=$AWS_REGION \
+    ORDER_PRODUCT_CREATE_QUEUE=$ORDER_PRODUCT_CREATE_QUEUE \
+    ORDER_PRODUCT_CREATE_ACCEPT_QUEUE=$ORDER_PRODUCT_CREATE_ACCEPT_QUEUE \
+    ORDER_PRODUCT_DELETE_QUEUE=$ORDER_PRODUCT_DELETE_QUEUE \
+    ORDER_PRODUCT_DELETE_ACCEPT_QUEUE=$ORDER_PRODUCT_DELETE_ACCEPT_QUEUE \
+    ORDER_PRODUCT_UPDATE_QUEUE=$ORDER_PRODUCT_UPDATE_QUEUE \
+    ORDER_PRODUCT_UPDATE_ACCEPT_QUEUE=$ORDER_PRODUCT_UPDATE_ACCEPT_QUEUE \
+    COOK_ORDER_CREATE_QUEUE=$COOK_ORDER_CREATE_QUEUE \
+    ORDER_STATUS_UPDATE_QUEUE=$ORDER_STATUS_UPDATE_QUEUE \
+    AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+    AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+    AWS_ENDPOINT=$AWS_ENDPOINT \
+    AWS_URL=$AWS_URL
+
 COPY package.json package-lock.json ./
 
-# Instala dependências de forma otimizada
 RUN npm ci --only=production
 
-# Copia o restante dos arquivos da aplicação
 COPY . .
 
-# Etapa 2: Criar a Imagem Final
 FROM node:20-alpine
 
-# Define diretório de trabalho na imagem final
 WORKDIR /app
 
-# Copia apenas os arquivos necessários da etapa anterior
 COPY --from=build /app /app
 
-# Define a porta exposta pelo container
-EXPOSE 9001
+EXPOSE 9100
 
-# Comando para iniciar a aplicação
-CMD ["node", "server.js"]
+CMD ["node", "dist/main.js"]

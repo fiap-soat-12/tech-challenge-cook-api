@@ -42,7 +42,7 @@ O projeto adota a **Clean Architecture**, garantindo flexibilidade, testabilidad
 DB_TYPE=postgresql
 DB_USER=postgres
 DB_HOST=localhost
-DB_NAME=tech-challenge-cook-db
+DB_NAME=tc-cook-db
 DB_PASSWORD=password
 DB_PORT=5432
 TZ=America/Sao_Paulo
