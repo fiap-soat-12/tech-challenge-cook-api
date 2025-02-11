@@ -23,7 +23,7 @@
     "version:major": "npm version major",
     "version:minor": "npm version minor",
     "version:patch": "npm version patch",
-    "prepare": "husky install"
+    "prepare": "if [ \"$NODE_ENV\" === \"development\" ]; then husky install; fi"
   },
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.731.1",
