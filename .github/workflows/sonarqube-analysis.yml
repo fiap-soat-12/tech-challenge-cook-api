@@ -7,45 +7,52 @@ on:
 
 jobs:
   sonar:
+    name: Análise SonarQube
     runs-on: ubuntu-latest
 
     steps:
       # 1. Checkout do código
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout do Código
+        uses: actions/checkout@v4
 
-      # 2. Instalar dependências do Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      # 2. Configurar Node.js e Cache
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20' # Atualizado para ser compatível com seu projeto
+          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+      # 3. Instalar dependências
+      - name: Instalar Dependências
+        run: npm ci
 
-      # 3. Executar testes e gerar cobertura
-      - name: Run tests and generate coverage
-        run: npm run test -- --coverage
+      # 4. Executar testes e gerar cobertura
+      - name: Rodar Testes e Gerar Cobertura
+        run: npm test -- --coverage
 
-      # 4. Generate HTML reports
-      - name: Generate HTML reports
-        run: |
-          mkdir -p ./reports
-          npm run test -- --coverage --reporters=jest-html-reporter
-
-      # 5. Upload reports
-      - name: Upload coverage and test reports
+      # 5. Upload dos Relatórios de Teste
+      - name: Upload dos Relatórios de Cobertura
         uses: actions/upload-artifact@v3
         with:
-          name: test-reports
-          path: |
-            ./coverage
-            ./reports
+          name: cobertura-teste
+          path: ./coverage
 
-      # 6. Executar o SonarScanner
-      - name: Run SonarQube Scanner
+      # 6. Instalar SonarQube Scanner
+      - name: Instalar SonarQube Scanner
+        run: npm install -g sonarqube-scanner
+
+      # 7. Executar Análise SonarQube
+      - name: Executar Análise SonarQube
         env:
-          SONAR_HOST_URL: http://your-sonarqube-server:9000
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: 'https://sonarcloud.io' # Altere para seu servidor se for auto-hospedado
         run: |
-          npx sonar-scanner
+          sonar-scanner \
+            -Dsonar.projectKey=tech-challenge-cook-api \
+            -Dsonar.organization=my-org \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_TOKEN \
+            -Dsonar.coverage.exclusions=**/node_modules/**,**/test/** \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.qualitygate.wait=true # Garante que falhe caso o Quality Gate não passe
