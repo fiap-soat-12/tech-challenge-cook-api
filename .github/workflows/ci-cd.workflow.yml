@@ -1,0 +1,84 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  ECR_REPOSITORY: tech-challenge-cook-api
+  AWS_REGION: us-east-1
+  IMAGE_TAG: latest
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js e Cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar Dependências
+        run: npm ci
+
+      - name: Rodar Testes Unitários
+        run: npm test
+
+  sonar:
+    name: Análise SonarQube
+    runs-on: ubuntu-latest
+    needs: build-and-test # Só executa se a etapa de build e teste passar
+
+    steps:
+      - name: Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Rodar Análise SonarQube
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npm install -g sonarqube-scanner
+          sonar-scanner \
+            -Dsonar.projectKey=tech-challenge-cook-api \
+            -Dsonar.organization=my-org \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=$SONAR_TOKEN \
+            -Dsonar.qualitygate.wait=true
+
+  build-and-push-ecr:
+    name: Build and Push Docker Image to ECR
+    runs-on: ubuntu-latest
+    needs: sonar
+
+    steps:
+      - name: Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: Login no AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Definir TAG da Imagem
+        run: echo "IMAGE_TAG=$(date +%Y%m%d%H%M%S)-${{ github.sha }}" >> $GITHUB_ENV
+
+      - name: Construir e Taggear a Imagem Docker
+        run: |
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Push da Imagem para o Amazon ECR
+        run: |
+          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
