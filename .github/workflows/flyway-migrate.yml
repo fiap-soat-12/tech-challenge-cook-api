@@ -1,0 +1,31 @@
+name: Flyway Cook Migrations run
+
+on:
+  push:
+    branches:
+      - main # Executa a pipeline quando há um push na main
+  workflow_dispatch: # Permite rodar manualmente no GitHub Actions
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Instalar Flyway
+        run: |
+          wget -qO- https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.10.1/flyway-commandline-9.10.1-linux-x64.tar.gz | tar xvz
+          sudo ln -s `pwd`/flyway-9.10.1/flyway /usr/local/bin/flyway
+
+      - name: Criar arquivo de configuração do Flyway
+        run: |
+          echo "flyway.url=jdbc:postgresql://${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }}" > flyway.conf
+          echo "flyway.user=${{ secrets.DB_USER }}" >> flyway.conf
+          echo "flyway.password=${{ secrets.DB_PASSWORD }}" >> flyway.conf
+          echo "flyway.schemas=public" >> flyway.conf
+          echo "flyway.locations=filesystem:resources/db/migration" >> flyway.conf
+
+      - name: Rodar Migrations do Flyway
+        run: flyway migrate
