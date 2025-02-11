@@ -34,7 +34,6 @@ jobs:
   build-and-push-ecr:
     name: Build and Push Docker Image to ECR
     runs-on: ubuntu-latest
-    needs: sonar
 
     steps:
       - name: Checkout do Código
