@@ -24,13 +24,16 @@ export class UpdateOrderStatusUseCase {
         throw new OrderNotFoundException(orderId);
       }
 
-      await this.orderRepository.updateStatus(existingOrder.id, status);
+      const updatedOrder = await this.orderRepository.updateStatus(
+        existingOrder.id,
+        status,
+      );
 
       this.logger.log(`Order with id: ${orderId} updated to ${status}`);
 
       this.evolveOrderUseCase.execute(existingOrder);
 
-      return existingOrder;
+      return updatedOrder;
     } catch (error) {
       this.logger.error(
         `Update order status to ${status} with id: ${orderId} failed`,

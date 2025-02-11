@@ -1,4 +1,4 @@
-import { OrderStatusEnum } from '@application/enums/order-status.enum';
+import { OrderUpdateStatusEnum } from '@application/enums/order-status.enum';
 import { UUID } from '@application/types/UUID.type';
 import { UpdateOrderStatusUseCase } from '@application/usecases/order/update-order-status/update-order-status.usecase';
 import { OrderNotFoundException } from '@domain/exceptions/order-not-found.exception';
@@ -35,7 +35,7 @@ describe('UpdateOrderStatusController', () => {
 
   it('should update order status successfully', async () => {
     const orderId: UUID = 'a6b9e046-fb5a-4a79-9d86-363e6fd20e11';
-    const status: OrderStatusEnum = OrderStatusEnum.READY;
+    const status: OrderUpdateStatusEnum = OrderUpdateStatusEnum.READY;
 
     jest.spyOn(useCase, 'execute').mockResolvedValueOnce(undefined);
 
@@ -47,7 +47,7 @@ describe('UpdateOrderStatusController', () => {
 
   it('should throw HttpException with 404 when order is not found', async () => {
     const orderId: UUID = 'a6b9e046-fb5a-4a79-9d86-363e6fd20e11';
-    const status: OrderStatusEnum = OrderStatusEnum.READY;
+    const status: OrderUpdateStatusEnum = OrderUpdateStatusEnum.READY;
 
     jest
       .spyOn(useCase, 'execute')
@@ -60,7 +60,7 @@ describe('UpdateOrderStatusController', () => {
 
   it('should throw HttpException with 500 on unknown error', async () => {
     const orderId: UUID = 'a6b9e046-fb5a-4a79-9d86-363e6fd20e11';
-    const status: OrderStatusEnum = OrderStatusEnum.READY;
+    const status: OrderUpdateStatusEnum = OrderUpdateStatusEnum.READY;
 
     jest
       .spyOn(useCase, 'execute')

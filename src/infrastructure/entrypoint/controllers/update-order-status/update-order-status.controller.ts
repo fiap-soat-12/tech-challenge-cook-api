@@ -1,4 +1,5 @@
-import { OrderStatusEnum } from '@application/enums/order-status.enum';
+import { OrderUpdateStatusEnum } from '@application/enums/order-status.enum';
+import { OrderStatusType } from '@application/types/order-status.type';
 import { UUID } from '@application/types/UUID.type';
 import { UpdateOrderStatusUseCase } from '@application/usecases/order/update-order-status/update-order-status.usecase';
 import { OrderNotFoundException } from '@domain/exceptions/order-not-found.exception';
@@ -50,14 +51,18 @@ export class UpdateOrderStatusController {
     name: 'status',
     description: 'New status of the order',
     example: 'READY',
-    enum: OrderStatusEnum,
+    enum: OrderUpdateStatusEnum,
   })
   async updateOrderStatus(
     @Param('id', UUIDValidationPipe) id: UUID,
-    @Param('status') status: OrderStatusEnum,
-  ): Promise<void> {
+    @Param('status') status: OrderUpdateStatusEnum,
+  ): Promise<{ orderId: UUID; status: OrderStatusType }> {
     try {
-      await this.usecase.execute(id, status);
+      const updatedOrder = await this.usecase.execute(id, status);
+      return {
+        orderId: updatedOrder.id,
+        status: updatedOrder.status.getValue(),
+      };
     } catch (error) {
       if (error instanceof OrderNotFoundException) {
         throw new HttpException(error.message, 404);

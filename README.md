@@ -1,99 +1,98 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Tech Challenge - Cook API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![GitHub Release Date](https://img.shields.io/badge/Release%20Date-2024-yellowgreen)
+![](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellowgreen)
+![](https://img.shields.io/badge/Version-%20v1.0.0-brightgreen)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 💻 Descrição
 
-## Description
+O **Tech Challenge - Cook API** é um microserviço desenvolvido em **Node.js** com **NestJS** e **TypeScript**, seguindo os princípios da **Clean Architecture**. Ele é responsável por gerenciar os endpoints de **manutenção de produtos** do restaurante e **consulta de pedidos** para a cozinha.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🛠 Tecnologias Utilizadas
 
-## Project setup
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=for-the-badge&logo=GitHub-Actions&logoColor=white)
 
-```bash
-$ npm install
+## 💫 Arquitetura
+
+O projeto adota a **Clean Architecture**, garantindo flexibilidade, testabilidade e manutenção escalável.
+
+## ⚙️ Configuração
+
+### Pré-requisitos
+
+- **[Node.js 18+](https://nodejs.org/)**
+- **[NestJS CLI](https://docs.nestjs.com/cli/overview)**
+- **[Docker](https://www.docker.com/)**
+- **[Docker Compose](https://docs.docker.com/compose/)**
+- **[PostgreSQL](https://www.postgresql.org/)**
+
+### 🚀 Execução
+
+#### Subindo a aplicação com Docker Compose
+
+1. Criar um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+
+```sh
+DB_TYPE=postgresql
+DB_USER=postgres
+DB_HOST=localhost
+DB_NAME=tech-challenge-cook-db
+DB_PASSWORD=password
+DB_PORT=5432
+TZ=America/Sao_Paulo
+AWS_REGION=us-east-1
+ORDER_PRODUCT_CREATE_QUEUE=order-product-create-queue
+ORDER_PRODUCT_CREATE_ACCEPT_QUEUE=order-product-create-accept-queue
+ORDER_PRODUCT_DELETE_QUEUE=order-product-delete-queue
+ORDER_PRODUCT_DELETE_ACCEPT_QUEUE=order-product-delete-accept-queue
+ORDER_PRODUCT_UPDATE_QUEUE=order-product-update-queue
+ORDER_PRODUCT_UPDATE_ACCEPT_QUEUE=order-product-update-accept-queue
+COOK_ORDER_CREATE_QUEUE=cook-order-create-queue
+ORDER_STATUS_UPDATE_QUEUE=order-status-update-queue
+AWS_ACCESS_KEY_ID=teste
+AWS_SECRET_ACCESS_KEY=teste
+AWS_REGION=us-east-1
+AWS_ENDPOINT=http://localhost:4566
+AWS_URL=http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000
 ```
 
-## Compile and run the project
+2. Executar o comando:
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```sh
+docker compose up
 ```
 
-## Run tests
+3. O serviço estará disponível em `http://localhost:3000/api`
+
+## 📄 Documentação da API
+
+A documentação da API pode ser acessada através do Swagger:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+http://localhost:3000/api/swagger
 ```
 
-## Deployment
+## 🔃 Fluxo de Execução das APIs
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+1. Criar um novo **produto** no restaurante via (POST) `/api/v1/products`
+2. Listar todos os produtos via (GET) `/api/v1/products`
+3. Atualizar um produto via (PUT) `/api/v1/products/{id}`
+4. Excluir um produto via (DELETE) `/api/v1/products/{id}`
+5. Consultar os **pedidos** em andamento na cozinha via (GET) `/api/v1/orders`
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## 🎲 Seeds
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+Este projeto utiliza **seeds** para pré-popular o banco de dados. O **Flyway** gerencia essas migrações automaticamente ao iniciar a aplicação.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 📚 Event Storming
 
-## Resources
+![Event Storming](./assets/event_storming.png)
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Acesso ao MIRO com o Event Storming:
+[Event Storming](https://miro.com/app/board/uXjVK1ekBDM=/)
