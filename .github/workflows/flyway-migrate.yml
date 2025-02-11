@@ -3,8 +3,8 @@ name: Flyway Cook Migrations run
 on:
   push:
     branches:
-      - main # Executa a pipeline quando há um push na main
-  workflow_dispatch: # Permite rodar manualmente no GitHub Actions
+      - main
+  workflow_dispatch:
 
 jobs:
   migrate:
