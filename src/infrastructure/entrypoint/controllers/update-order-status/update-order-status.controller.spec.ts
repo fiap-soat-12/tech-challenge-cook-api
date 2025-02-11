@@ -1,6 +1,7 @@
 import { OrderUpdateStatusEnum } from '@application/enums/order-status.enum';
 import { UUID } from '@application/types/UUID.type';
 import { UpdateOrderStatusUseCase } from '@application/usecases/order/update-order-status/update-order-status.usecase';
+import { Order } from '@domain/entities/order';
 import { OrderNotFoundException } from '@domain/exceptions/order-not-found.exception';
 import { HttpException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -37,11 +38,21 @@ describe('UpdateOrderStatusController', () => {
     const orderId: UUID = 'a6b9e046-fb5a-4a79-9d86-363e6fd20e11';
     const status: OrderUpdateStatusEnum = OrderUpdateStatusEnum.READY;
 
-    jest.spyOn(useCase, 'execute').mockResolvedValueOnce(undefined);
+    jest.spyOn(useCase, 'execute').mockResolvedValueOnce(
+      new Order({
+        id: orderId,
+        sequence: 1,
+        products: [],
+        status: OrderUpdateStatusEnum.READY,
+      }),
+    );
 
     await expect(
       controller.updateOrderStatus(orderId, status),
-    ).resolves.toBeUndefined();
+    ).resolves.toEqual({
+      orderId: 'a6b9e046-fb5a-4a79-9d86-363e6fd20e11',
+      status: 'READY',
+    });
     expect(useCase.execute).toHaveBeenCalledWith(orderId, status);
   });
 
