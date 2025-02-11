@@ -42,8 +42,14 @@ describe('UpdateOrderStatusUseCase', () => {
       products: [],
       status: OrderStatusEnum.PREPARING,
     });
+    const updatedOrder = new Order({
+      id: orderId,
+      sequence: 1,
+      products: [],
+      status: OrderStatusEnum.READY,
+    });
     jest.spyOn(orderRepository, 'findById').mockResolvedValue(existingOrder);
-    jest.spyOn(orderRepository, 'updateStatus').mockResolvedValue(undefined);
+    jest.spyOn(orderRepository, 'updateStatus').mockResolvedValue(updatedOrder);
 
     const result = await useCase.execute(orderId, OrderStatusEnum.READY);
 
@@ -60,7 +66,7 @@ describe('UpdateOrderStatusUseCase', () => {
       orderId,
       OrderStatusEnum.READY,
     );
-    expect(result).toEqual(existingOrder);
+    expect(result).toEqual(updatedOrder);
   });
 
   it('should throw OrderNotFoundException if order does not exist', async () => {
