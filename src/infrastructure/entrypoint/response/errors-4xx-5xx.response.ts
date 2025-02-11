@@ -17,7 +17,7 @@ export class Erros4xx5xxResponse {
   timestamp: string;
 
   @ApiProperty({
-    example: '/api/v1/resource',
+    example: '/cook/v1/resource',
     description: 'Path of the API endpoint where the error occurred',
   })
   path: string;

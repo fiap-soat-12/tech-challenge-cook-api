@@ -68,23 +68,23 @@ AWS_URL=http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000
 docker compose up
 ```
 
-3. O serviço estará disponível em `http://localhost:3000/api`
+3. O serviço estará disponível em `http://localhost:3000/cook`
 
 ## 📄 Documentação da API
 
 A documentação da API pode ser acessada através do Swagger:
 
 ```bash
-http://localhost:3000/api/swagger
+http://localhost:3000/cook/swagger
 ```
 
 ## 🔃 Fluxo de Execução das APIs
 
-1. Criar um novo **produto** no restaurante via (POST) `/api/v1/products`
-2. Listar todos os produtos via (GET) `/api/v1/products`
-3. Atualizar um produto via (PUT) `/api/v1/products/{id}`
-4. Excluir um produto via (DELETE) `/api/v1/products/{id}`
-5. Consultar os **pedidos** em andamento na cozinha via (GET) `/api/v1/orders`
+1. Criar um novo **produto** no restaurante via (POST) `/cook/v1/products`
+2. Listar todos os produtos via (GET) `/cook/v1/products`
+3. Atualizar um produto via (PUT) `/cook/v1/products/{id}`
+4. Excluir um produto via (DELETE) `/cook/v1/products/{id}`
+5. Consultar os **pedidos** em andamento na cozinha via (GET) `/cook/v1/orders`
 
 ## 🎲 Seeds
 
