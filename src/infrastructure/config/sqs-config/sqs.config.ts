@@ -65,7 +65,6 @@ export class SqsClient {
       });
     } catch (error) {
       console.error(`Failed to receive messages from queue: ${error.message}`);
-      throw error;
     }
   }
 
