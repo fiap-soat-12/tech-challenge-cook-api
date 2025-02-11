@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: nestjs-app
+    environment:
+      - NODE_ENV=development
+      - DB_TYPE=postgresql
+      - DB_USER=postgres
+      - DB_HOST=db
+      - DB_NAME=tc-cook-db
+      - DB_PASSWORD=password
+      - DB_PORT=5432
+      - TZ=America/Sao_Paulo
+      - AWS_REGION=us-east-1
+      - ORDER_PRODUCT_CREATE_QUEUE=order-product-create-queue
+      - ORDER_PRODUCT_CREATE_ACCEPT_QUEUE=order-product-create-accept-queue
+      - ORDER_PRODUCT_DELETE_QUEUE=order-product-delete-queue
+      - ORDER_PRODUCT_DELETE_ACCEPT_QUEUE=order-product-delete-accept-queue
+      - ORDER_PRODUCT_UPDATE_QUEUE=order-product-update-queue
+      - ORDER_PRODUCT_UPDATE_ACCEPT_QUEUE=order-product-update-accept-queue
+      - COOK_ORDER_CREATE_QUEUE=cook-order-create-queue
+      - ORDER_STATUS_UPDATE_QUEUE=order-status-update-queue
+      - AWS_ACCESS_KEY_ID=teste
+      - AWS_SECRET_ACCESS_KEY=teste
+      - AWS_REGION=us-east-1
+      - AWS_ENDPOINT=http://localhost:4566
+      - AWS_URL=http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000
+    ports:
+      - '3000:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    links:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: 'postgres:latest'
+    container_name: nestjs-db
+    restart: always
+    hostname: postgres
+    environment:
+      - POSTGRES_DB=tc-cook-db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  flyway:
+    image: flyway/flyway:latest
+    container_name: flyway
+    volumes:
+      - ./src/resources/db/migration:/flyway/sql
+    environment:
+      - FLYWAY_URL=jdbc:postgresql://db:5432/tc-cook-db
+      - FLYWAY_USER=postgres
+      - FLYWAY_PASSWORD=password
+      - FLYWAY_SCHEMAS=public
+    command: -locations=filesystem:/flyway/sql migrate
+    healthcheck:
+      test: ['CMD-SHELL', 'flyway info']
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  app-network:
+    name: nestjs-network
