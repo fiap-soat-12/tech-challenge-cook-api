@@ -1,14 +1,18 @@
+import { HealthCheckController } from '@infrastructure/entrypoint/controllers/health-check/heatlh-check.controller';
 import { NotFoundDomainExceptionFilter } from '@infrastructure/entrypoint/filters/not-found.filter';
 import { NestLoggerAdapter } from '@infrastructure/log/nest-logger.adapter';
 import { DatabaseModule } from '@infrastructure/modules/database.module';
 import { ListenerModule } from '@infrastructure/modules/listener.module';
 import { ProductModule } from '@infrastructure/modules/product.module';
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
+import { TerminusModule } from '@nestjs/terminus';
 import { OrderModule } from './order.module';
 import { PublisherModule } from './publisher.module';
 
 @Module({
+  controllers: [HealthCheckController],
   providers: [
     {
       provide: 'Logger',
@@ -20,6 +24,8 @@ import { PublisherModule } from './publisher.module';
     },
   ],
   imports: [
+    HttpModule,
+    TerminusModule,
     ProductModule,
     DatabaseModule,
     ListenerModule,
