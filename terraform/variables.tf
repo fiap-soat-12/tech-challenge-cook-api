@@ -45,7 +45,7 @@ variable "AWS_SESSION_TOKEN" {
 
 variable "secret_name" {
   type = string
-  default = "tc_cook_db_credentials"
+  default = "tech-challenge-cook-db-credentials"
   description = "secret_name"
 }
 

@@ -53,7 +53,7 @@ resource "kubernetes_deployment" "cook_deployment" {
       spec {
         container {
           # image             = data.aws_ecr_image.latest_image.image_uri
-          image             = "diguya/tech-challenge-cook-api:latest"
+          image             = "diguya/tech-challenge-cook-api:v4.0"
           name              = "tech-challenge-cook-api"
           image_pull_policy = "Always"
 
@@ -151,28 +151,13 @@ resource "kubernetes_deployment" "cook_deployment" {
           }
 
           env {
-            name  = "ORDER_PRODUCT_CREATE_ACCEPT_QUEUE"
-            value = data.aws_sqs_queue.order_product_create_accept_queue.url
-          }
-
-          env {
             name  = "ORDER_PRODUCT_DELETE_QUEUE"
             value = data.aws_sqs_queue.order_product_delete_queue.url
           }
 
           env {
-            name  = "ORDER_PRODUCT_DELETE_ACCEPT_QUEUE"
-            value = data.aws_sqs_queue.order_product_delete_accept_queue.url
-          }
-
-          env {
             name  = "ORDER_PRODUCT_UPDATE_QUEUE"
             value = data.aws_sqs_queue.order_product_update_queue.url
-          }
-
-          env {
-            name  = "ORDER_PRODUCT_UPDATE_ACCEPT_QUEUE"
-            value = data.aws_sqs_queue.order_product_update_accept_queue.url
           }
 
           env {
