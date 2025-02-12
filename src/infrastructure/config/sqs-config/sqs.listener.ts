@@ -7,11 +7,9 @@ export abstract class SqsListener<T> {
   protected readonly logger: Logger;
 
   constructor(sqsClient: SqsClient, logger: Logger, queueUrl: string) {
-    const awsUrl = process.env.AWS_URL || '';
-
     this.sqsClient = sqsClient;
     this.logger = logger;
-    this.queueUrl = `${awsUrl}/${queueUrl}`;
+    this.queueUrl = queueUrl;
   }
 
   async listen(): Promise<void> {

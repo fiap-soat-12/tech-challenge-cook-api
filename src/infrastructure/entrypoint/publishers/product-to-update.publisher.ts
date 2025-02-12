@@ -7,26 +7,21 @@ export class ProductToUpdatePublisher
   implements MessagePublisher<SendProductDto>
 {
   private readonly queueUrl: string;
-  private readonly awsUrl: string;
 
   constructor(
     private readonly sqsClient: SqsClient,
     private readonly logger: Logger,
   ) {
     this.queueUrl = process.env.ORDER_PRODUCT_UPDATE_QUEUE || '';
-    this.awsUrl = process.env.AWS_URL || '';
   }
 
   async publish(product: SendProductDto): Promise<void> {
-    if (!this.queueUrl || !this.awsUrl) {
+    if (!this.queueUrl) {
       throw new Error('Queue URL for Product Updated not configured');
     }
 
     try {
-      await this.sqsClient.sendMessage(
-        `${this.awsUrl}/${this.queueUrl}`,
-        product,
-      );
+      await this.sqsClient.sendMessage(this.queueUrl, product);
       this.logger.log(
         `Product updated event published: ${JSON.stringify(product)}`,
       );

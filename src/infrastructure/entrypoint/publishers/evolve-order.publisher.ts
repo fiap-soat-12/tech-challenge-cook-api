@@ -10,32 +10,23 @@ export class EvolveOrderPublisher
     }>
 {
   private readonly queueUrl: string;
-  private readonly awsUrl: string;
 
   constructor(
     private readonly sqsClient: SqsClient,
     private readonly logger: Logger,
   ) {
     this.queueUrl = process.env.ORDER_STATUS_UPDATE_QUEUE || '';
-    this.awsUrl = process.env.AWS_URL || '';
 
     if (!this.queueUrl) {
       throw new Error(
         'ORDER_STATUS_UPDATE_QUEUE environment variable is not set',
       );
     }
-
-    if (!this.awsUrl) {
-      throw new Error('AWS_URL environment variable is not set');
-    }
   }
 
   async publish(input: { orderId: UUID }): Promise<void> {
     try {
-      await this.sqsClient.sendMessage(
-        `${this.awsUrl}/${this.queueUrl}`,
-        input,
-      );
+      await this.sqsClient.sendMessage(this.queueUrl, input);
       this.logger.log(`Order evolve event published: ${JSON.stringify(input)}`);
     } catch (error) {
       this.logger.error(

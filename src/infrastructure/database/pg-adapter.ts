@@ -25,12 +25,14 @@ export class PgAdapter implements DatabaseConnection {
   private readonly pool: Pool;
 
   private constructor() {
+    const dbType = process.env.DB_TYPE || 'postgres';
+    const dbUser = process.env.DB_USER || 'postgres';
+    const dbHost = process.env.DB_HOST || 'localhost';
+    const dbName = process.env.DB_NAME || 'techchallenge';
+    const dbPassword = process.env.DB_PASSWORD || 'password';
+
     this.pool = new Pool({
-      user: process.env.DB_USER || 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      database: process.env.DB_NAME || 'techchallenge',
-      password: process.env.DB_PASSWORD || 'password',
-      port: parseInt(process.env.DB_PORT || '5432', 10),
+      connectionString: `${dbType}://${dbUser}:${dbPassword}@${dbHost}/${dbName}`,
     });
   }
 

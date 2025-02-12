@@ -7,32 +7,23 @@ export class ProductToCreatePublisher
   implements MessagePublisher<SendProductDto>
 {
   private readonly queueUrl: string;
-  private readonly awsUrl: string;
 
   constructor(
     private readonly sqsClient: SqsClient,
     private readonly logger: Logger,
   ) {
     this.queueUrl = process.env.ORDER_PRODUCT_CREATE_QUEUE || '';
-    this.awsUrl = process.env.AWS_URL || '';
 
     if (!this.queueUrl) {
       throw new Error(
         'ORDER_PRODUCT_CREATE_QUEUE environment variable is not set',
       );
     }
-
-    if (!this.awsUrl) {
-      throw new Error('AWS_URL environment variable is not set');
-    }
   }
 
   async publish(product: SendProductDto): Promise<void> {
     try {
-      await this.sqsClient.sendMessage(
-        `${this.awsUrl}/${this.queueUrl}`,
-        product,
-      );
+      await this.sqsClient.sendMessage(this.queueUrl, product);
       this.logger.log(
         `Product created event published: ${JSON.stringify(product)}`,
       );

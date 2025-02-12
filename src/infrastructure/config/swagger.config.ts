@@ -4,6 +4,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { SWAGGER_PATH } from './constants';
 
+const SWAGGER_JSON_PATH = `${SWAGGER_PATH}/docs-json`;
+
 export function setupSwagger(app: INestApplication) {
   const swaggerDescription = `API Rest for Tech Challenge of Master's Degree in Software Architecture
 
@@ -35,5 +37,17 @@ export function setupSwagger(app: INestApplication) {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup(SWAGGER_PATH, app, document);
+
+  SwaggerModule.setup(SWAGGER_PATH, app, document, {
+    swaggerOptions: {
+      urls: [
+        {
+          url: `/${SWAGGER_JSON_PATH}`,
+          name: 'API Docs',
+        },
+      ],
+    },
+  });
+
+  app.use(`/${SWAGGER_JSON_PATH}`, (_req, res) => res.json(document));
 }

@@ -39,7 +39,7 @@ async function bootstrap() {
   setupValidationPipe(app);
   setupSwagger(app);
 
-  const PORT = process.env.PORT ?? 3000;
+  const PORT = process.env.PORT ?? 9100;
   await app.listen(PORT);
 
   const appUrl = await app.getUrl();
