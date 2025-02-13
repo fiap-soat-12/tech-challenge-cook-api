@@ -22,8 +22,7 @@
     "sonar": "sonar-scanner",
     "version:major": "npm version major",
     "version:minor": "npm version minor",
-    "version:patch": "npm version patch",
-    "prepare": "if [ \"$NODE_ENV\" === \"development\" ]; then husky install; fi"
+    "version:patch": "npm version patch"
   },
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.731.1",

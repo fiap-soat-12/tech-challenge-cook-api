@@ -52,8 +52,8 @@ resource "kubernetes_deployment" "cook_deployment" {
 
       spec {
         container {
-          # image             = data.aws_ecr_image.latest_image.image_uri
-          image             = "diguya/tech-challenge-cook-api:v4.0"
+        # image             = data.aws_ecr_image.latest_image.image_uri
+          image             = "diguya/tech-challenge-cook-api:latest"
           name              = "tech-challenge-cook-api"
           image_pull_policy = "Always"
 

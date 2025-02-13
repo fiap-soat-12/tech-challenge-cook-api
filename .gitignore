@@ -59,3 +59,9 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Sonarqube
 sonar-project-local.properties
 test-report.xml
+
+.terraform/
+.terraform.lock.hcl
+.terraform.tfstate.lock.info
+terraform.tfstate
+terraform.tfstate.backup
