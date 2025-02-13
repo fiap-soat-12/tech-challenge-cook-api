@@ -32,8 +32,8 @@ jobs:
       - name: Criar arquivo de configuração do Flyway
         run: |
           echo "flyway.url=jdbc:postgresql://tc-cook-db.c5gecikakga4.us-east-1.rds.amazonaws.com:5432/tc_cook_db" > flyway.conf
-          echo "flyway.user=postgre" >> flyway.conf
-          echo "flyway.password=postgre" >> flyway.conf
+          echo "flyway.user=postgres" >> flyway.conf
+          echo "flyway.password=postgres" >> flyway.conf
           echo "flyway.schemas=public" >> flyway.conf
           echo "flyway.locations=filesystem:resources/db/migration" >> flyway.conf
 
