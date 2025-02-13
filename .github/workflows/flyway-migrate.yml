@@ -28,13 +28,16 @@ jobs:
         id: get-ip
         run: |
           echo "RUNNER_IP=$(curl -s ifconfig.me)" >> $GITHUB_ENV
+          echo "Runner IP: $RUNNER_IP"
 
       - name: Permitir acesso temporário ao RDS
         run: |
           aws ec2 authorize-security-group-ingress \
             --group-id ${{ secrets.SECURITY_GROUP_ID }} \
             --protocol tcp --port 5432 \
-            --cidr $RUNNER_IP/32
+            --cidr ${RUNNER_IP}/32
+        env:
+          RUNNER_IP: ${{ env.RUNNER_IP }}
 
       - name: Instalar Flyway
         run: |
@@ -55,4 +58,6 @@ jobs:
           aws ec2 revoke-security-group-ingress \
             --group-id sg-0c479a25609dfecf1 \
             --protocol tcp --port 5432 \
-            --cidr $RUNNER_IP/32
+            --cidr ${RUNNER_IP}/32
+        env:
+          RUNNER_IP: ${{ env.RUNNER_IP }}
