@@ -14,8 +14,8 @@ jobs:
       - name: Configurar credenciais AWS
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ASIATPLKY6YEAALOIAMX
+          aws-secret-access-key: uFiNoHqaAMglDtJ1xPPEfsqkXgHhn374uHjVEJr1
           aws-region: us-east-1
 
       - name: Instalar Flyway
@@ -25,9 +25,9 @@ jobs:
 
       - name: Criar arquivo de configuração do Flyway
         run: |
-          echo "flyway.url=jdbc:postgresql://${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }}" > flyway.conf
-          echo "flyway.user=${{ secrets.DB_USER }}" >> flyway.conf
-          echo "flyway.password=${{ secrets.DB_PASSWORD }}" >> flyway.conf
+          echo "flyway.url=jdbc:postgresql://tc-cook-db.c5gecikakga4.us-east-1.rds.amazonaws.com:5432/tc_cook_db" > flyway.conf
+          echo "flyway.user=postgre" >> flyway.conf
+          echo "flyway.password=postgre" >> flyway.conf
           echo "flyway.schemas=public" >> flyway.conf
           echo "flyway.locations=filesystem:resources/db/migration" >> flyway.conf
 
