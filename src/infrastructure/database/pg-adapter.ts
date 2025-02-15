@@ -28,11 +28,10 @@ export class PgAdapter implements DatabaseConnection {
   private constructor(private readonly logger: Logger) {
     const dbType = process.env.DB_TYPE || 'postgresql';
     const dbUser = process.env.DB_USER || 'postgres';
-    const dbHost = process.env.DB_HOST || 'localhost';
+    const dbHost = process.env.DB_URL || 'localhost';
     const dbName = process.env.DB_NAME || 'tc_cook_db';
     const dbPassword = process.env.DB_PASSWORD || 'password';
 
-    debugger;
     this.logger.log(
       'PgAdapter connectionString',
       `${dbType}://${dbUser}:${dbPassword}@${dbHost}/${dbName}`,
