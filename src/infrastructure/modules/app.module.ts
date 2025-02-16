@@ -10,6 +10,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { TerminusModule } from '@nestjs/terminus';
 import { OrderModule } from './order.module';
 import { PublisherModule } from './publisher.module';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
   controllers: [HealthCheckController],
@@ -24,6 +25,7 @@ import { PublisherModule } from './publisher.module';
     },
   ],
   imports: [
+    PrometheusModule.register(),
     HttpModule,
     TerminusModule,
     ProductModule,
