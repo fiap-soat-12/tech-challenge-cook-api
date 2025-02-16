@@ -3,7 +3,7 @@ import { OrderStatusType } from '@application/types/order-status.type';
 import { UUID } from '@application/types/UUID.type';
 import { Order } from '@domain/entities/order';
 import { OrderProduct } from '@domain/entities/order-product';
-import { OrderPersistenceError } from '@domain/exceptions/order-persistence.error';
+import { OrderPersistenceError } from '@domain/exceptions/order-persistence.exception';
 import { DatabaseConnection } from '@domain/interface/database-connection.interface';
 import { OrderRepository } from '@domain/repositories/order.repository';
 import { OrderProductEntity } from './entities/order-product.entity';
@@ -30,7 +30,7 @@ export class OrderPersistence implements OrderRepository {
         params,
       );
 
-      if (!resultOrder || !resultOrder.length) {
+      if (!resultOrder?.length) {
         return null;
       }
 
@@ -73,7 +73,7 @@ export class OrderPersistence implements OrderRepository {
     try {
       const resultOrder = await this.connection.query<OrderEntity>(query, [id]);
 
-      if (!resultOrder || !resultOrder.length) {
+      if (!resultOrder?.length) {
         return null;
       }
 
@@ -112,7 +112,7 @@ export class OrderPersistence implements OrderRepository {
         orderParams,
       );
 
-      if (!orderResult || !orderResult.length) {
+      if (!orderResult?.length) {
         throw new Error('Failed to create Order');
       }
 

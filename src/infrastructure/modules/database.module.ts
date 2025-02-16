@@ -1,10 +1,10 @@
 import { DatabaseConnection } from '@domain/interface/database-connection.interface';
-import { PgAdapter } from '@infrastructure/database/pg-adapter';
 import { DatabaseInitService } from '@infrastructure/database/pg-database-init';
 import { DatabaseAcceptEnum } from '@infrastructure/enums/database-accepted.enum';
 import { Global, Inject, Module, OnModuleInit } from '@nestjs/common';
 import { LoggerModule } from './logger.module';
 import { Logger } from '@application/interfaces/logger.interface';
+import { PgAdapter } from '@infrastructure/database/pg.adapter';
 
 @Global()
 @Module({
