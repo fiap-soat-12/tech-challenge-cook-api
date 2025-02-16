@@ -1,3 +1,4 @@
+import { Logger } from '@application/interfaces/logger.interface';
 import { DatabaseConnection } from '@domain/interface/database-connection.interface';
 import { PageCollection } from '@domain/models/page-collection';
 import { Pool } from 'pg';
@@ -24,21 +25,26 @@ export class PgAdapter implements DatabaseConnection {
   private static instance: PgAdapter;
   private readonly pool: Pool;
 
-  private constructor() {
-    const dbType = process.env.DB_TYPE || 'postgres';
+  private constructor(private readonly logger: Logger) {
+    const dbType = process.env.DB_TYPE || 'postgresql';
     const dbUser = process.env.DB_USER || 'postgres';
     const dbHost = process.env.DB_HOST || 'localhost';
-    const dbName = process.env.DB_NAME || 'techchallenge';
+    const dbName = process.env.DB_NAME || 'tc_cook_db';
     const dbPassword = process.env.DB_PASSWORD || 'password';
+
+    this.logger.log(
+      'PgAdapter connectionString',
+      `${dbType}://${dbUser}:${dbPassword}@${dbHost}/${dbName}`,
+    );
 
     this.pool = new Pool({
       connectionString: `${dbType}://${dbUser}:${dbPassword}@${dbHost}/${dbName}`,
     });
   }
 
-  static getInstance(): PgAdapter {
+  static getInstance(logger: Logger): PgAdapter {
     if (!PgAdapter.instance) {
-      PgAdapter.instance = new PgAdapter();
+      PgAdapter.instance = new PgAdapter(logger);
     }
     return PgAdapter.instance;
   }
@@ -50,9 +56,9 @@ export class PgAdapter implements DatabaseConnection {
   async connect(): Promise<void> {
     try {
       await this.pool.connect();
-      console.log('Connected to PostgreSQL');
+      this.logger.log('Connected to PostgreSQL');
     } catch (error) {
-      console.error('Failed to connect to PostgreSQL', error);
+      this.logger.error('Failed to connect to PostgreSQL', error);
       throw new Error('Database connection failed');
     }
   }
@@ -60,9 +66,9 @@ export class PgAdapter implements DatabaseConnection {
   async disconnect(): Promise<void> {
     try {
       await this.pool.end();
-      console.log('Disconnected from PostgreSQL');
+      this.logger.log('Disconnected from PostgreSQL');
     } catch (error) {
-      console.error('Error while disconnecting from PostgreSQL', error);
+      this.logger.error('Error while disconnecting from PostgreSQL', error);
       throw new Error('Database disconnection failed');
     }
   }
@@ -72,8 +78,8 @@ export class PgAdapter implements DatabaseConnection {
     params?: P,
   ): Promise<T[]> {
     try {
-      console.log(`Executing Query: ${statement}`);
-      console.log(`With Parameters: ${JSON.stringify(params)}`);
+      this.logger.log(`Executing Query: ${statement}`);
+      this.logger.log(`With Parameters: ${JSON.stringify(params)}`);
 
       const result: QueryResult<T> = await this.pool.query<T, P>(
         statement,
@@ -87,15 +93,18 @@ export class PgAdapter implements DatabaseConnection {
       return result.rows;
     } catch (error) {
       if (error.code === '23503') {
-        console.error(
+        this.logger.error(
           'Database query failed, O item referenciado não existe!:',
-          { statement, params, error },
+          JSON.stringify({ statement, params, error }),
         );
         throw new Error(
           'Database query failed, O item referenciado não existe!',
         );
       }
-      console.error('Database query failed:', { statement, params, error });
+      this.logger.error(
+        'Database query failed:',
+        JSON.stringify({ statement, params, error }),
+      );
       throw new Error('Failed to execute query');
     }
   }
@@ -112,8 +121,8 @@ export class PgAdapter implements DatabaseConnection {
     size: number;
   }): Promise<PageCollection<T>> {
     try {
-      console.log(`Executing Query Paginated: ${statement}`);
-      console.log(
+      this.logger.log(`Executing Query Paginated: ${statement}`);
+      this.logger.log(
         `With Parameters: ${JSON.stringify(params)}, page: ${page}, size: ${size}`,
       );
 
@@ -144,11 +153,13 @@ export class PgAdapter implements DatabaseConnection {
         pageSize: size,
       });
     } catch (error) {
-      console.error('Database query paginated failed:', {
-        statement,
-        params,
-        error,
-      });
+      this.logger.error(
+        `Database query paginated failed:, ${JSON.stringify({
+          statement,
+          params,
+          error,
+        })}`,
+      );
       throw new Error('Failed to execute query paginated');
     }
   }

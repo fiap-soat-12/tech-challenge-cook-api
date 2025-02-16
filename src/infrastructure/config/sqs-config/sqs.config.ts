@@ -4,6 +4,7 @@ import {
   SQSClient,
   SendMessageCommand,
 } from '@aws-sdk/client-sqs';
+import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
 export class SqsClient {
   private readonly client: SQSClient;
@@ -11,10 +12,7 @@ export class SqsClient {
   constructor() {
     this.client = new SQSClient({
       region: process.env.AWS_REGION || 'us-east-1',
-      credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-      },
+      credentials: fromNodeProviderChain(),
     });
   }
 

@@ -18,22 +18,27 @@ export abstract class SqsListener<T> {
     }
 
     while (true) {
-      const messages = await this.sqsClient.receiveMessages<T>(this.queueUrl);
+      try {
+        const messages = await this.sqsClient.receiveMessages<T>(this.queueUrl);
 
-      if (messages?.length > 0) {
-        for (const msg of messages) {
-          try {
-            await this.handleMessage(msg.message);
-          } catch (error) {
-            this.logger.error(
-              `Error processing message: ${error.message}`,
-              error.stack,
+        if (messages?.length > 0) {
+          for (const msg of messages) {
+            try {
+              await this.handleMessage(msg.message);
+            } catch (error) {
+              this.logger.error(
+                `Error processing message: ${error.message}`,
+                error.stack,
+              );
+            }
+
+            await this.sqsClient.deleteMessage(
+              this.queueUrl,
+              msg.receiptHandles,
             );
           }
-
-          await this.sqsClient.deleteMessage(this.queueUrl, msg.receiptHandles);
         }
-      } else {
+      } catch (error) {
         this.logger.error(`Error on consult queue, breake the loop`);
         break;
       }

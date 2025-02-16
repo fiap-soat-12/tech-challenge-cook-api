@@ -5,31 +5,59 @@ on:
 
 jobs:
   migrate:
+    name: Migração cook db flyway
     runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: Configurar credenciais AWS
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
+
+      - name: Obter IP do runner do GitHub Actions
+        id: get-ip
+        run: |
+          echo "RUNNER_IP=$(curl -s ifconfig.me)" >> $GITHUB_ENV
+          echo "Runner IP: $RUNNER_IP"
+
+      - name: Permitir acesso temporário ao RDS
+        run: |
+          aws ec2 authorize-security-group-ingress \
+            --group-id ${{ secrets.SECURITY_GROUP_ID }} \
+            --protocol tcp --port 5432 \
+            --cidr ${RUNNER_IP}/32
+        env:
+          RUNNER_IP: ${{ env.RUNNER_IP }}
 
       - name: Instalar Flyway
         run: |
           curl -L "https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.21.0/flyway-commandline-9.21.0-linux-x64.tar.gz" | tar xz
           sudo ln -s "$(pwd)/flyway-9.21.0/flyway" /usr/local/bin/flyway
 
-      - name: Criar arquivo de configuração do Flyway
-        run: |
-          echo "flyway.url=jdbc:postgresql://${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }}" > flyway.conf
-          echo "flyway.user=${{ secrets.DB_USER }}" >> flyway.conf
-          echo "flyway.password=${{ secrets.DB_PASSWORD }}" >> flyway.conf
-          echo "flyway.schemas=public" >> flyway.conf
-          echo "flyway.locations=filesystem:resources/db/migration" >> flyway.conf
-
       - name: Rodar Migrations do Flyway
-        run: flyway migrate
+        run: |
+          flyway -url=jdbc:postgresql://tc-cook-db.c5gecikakga4.us-east-1.rds.amazonaws.com:5432/tc_cook_db \
+                 -user=postgres \
+                 -password=postgres \
+                 -locations=filesystem:resources/db/migration \
+                 migrate
+
+      - name: Revogar acesso ao RDS após execução
+        if: always()
+        run: |
+          aws ec2 revoke-security-group-ingress \
+            --group-id sg-0c479a25609dfecf1 \
+            --protocol tcp --port 5432 \
+            --cidr ${RUNNER_IP}/32
+        env:
+          RUNNER_IP: ${{ env.RUNNER_IP }}
