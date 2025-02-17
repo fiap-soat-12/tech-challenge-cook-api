@@ -42,15 +42,15 @@ jobs:
       # 7. Executar Análise SonarQube
       - name: Executar Análise SonarQube
         env:
+          SONAR_PROJECT_KEY: tech-challenge-cook-api
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: 'https://sonarcloud.io' # Altere para seu servidor se for auto-hospedado
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} # Altere para seu servidor se for auto-hospedado
         run: |
           sonar-scanner \
-            -Dsonar.projectKey=tech-challenge-cook-api \
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} \
             -Dsonar.organization=my-org \
             -Dsonar.sources=. \
-            -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_TOKEN \
-            -Dsonar.coverage.exclusions=**/node_modules/**,**/test/** \
+            -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ env.SONAR_TOKEN }} \
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
             -Dsonar.qualitygate.wait=true # Garante que falhe caso o Quality Gate não passe
