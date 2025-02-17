@@ -100,7 +100,7 @@ docker compose up
   6. Executar o comando `terraform plan` para executar o planejamento da execução/implementação;
   7. Executar o comando `terraform apply` para criar a Cook API;
   8. Após a execução do Terraform finalizar, verificar se a Cook API subiu corretamente na AWS;
-  ![lambda-auth-aws-image]()
+  ![lambda-auth-aws-image](./assets/lambda-auth.png)
 
 ## 📄 Documentação da API
 
