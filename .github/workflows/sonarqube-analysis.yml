@@ -36,6 +36,9 @@ jobs:
           name: cobertura-teste
           path: ./coverage
 
+      - name: Debug SONAR_HOST_URL
+        run: echo "SONAR_HOST_URL=${{ secrets.SONAR_HOST_URL }}"
+
       # 6. Executar Análise SonarQube
       - name: Executar Análise SonarQube
         uses: SonarSource/sonarqube-scan-action@v2
