@@ -46,7 +46,7 @@ jobs:
           args: >
             -Dsonar.projectKey=tech-challenge-cook-api
             -Dsonar.sources=.
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
+            -Dsonar.login=${{ env.SONAR_TOKEN }}
             -Dsonar.qualitygate.wait=true
             -Dsonar.verbose=true
