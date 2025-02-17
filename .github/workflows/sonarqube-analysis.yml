@@ -1,7 +1,7 @@
 name: SonarQube NodeJS Analysis
 
 on:
-  workflow_dispatch: # Permite execução manual
+  workflow_dispatch:
 
 jobs:
   sonar:
@@ -9,47 +9,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout do código
       - name: Checkout do Código
         uses: actions/checkout@v4
 
-      # 2. Configurar Node.js e Cache
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Compatível com seu projeto
+          node-version: '20'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
 
-      # 3. Instalar dependências
       - name: Instalar Dependências
         run: npm ci
 
-      # 4. Executar testes e gerar cobertura
       - name: Rodar Testes e Gerar Cobertura
         run: npm test -- --coverage
 
-      # 5. Upload dos Relatórios de Teste
       - name: Upload dos Relatórios de Cobertura
         uses: actions/upload-artifact@v4
         with:
           name: cobertura-teste
           path: ./coverage
 
-      - name: Debug SONAR_HOST_URL
-        run: echo "SONAR_HOST_URL=${{ secrets.SONAR_HOST_URL }}"
+      - name: Testar Conexão com SonarQube
+        run: curl -I $SONAR_HOST_URL
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      # 6. Executar Análise SonarQube
       - name: Executar Análise SonarQube
         uses: SonarSource/sonarqube-scan-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          args: >
-            -Dsonar.projectKey=tech-challenge-cook-api
-            -Dsonar.sources=.
-            -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
-            -Dsonar.login=${{ env.SONAR_TOKEN }}
-            -Dsonar.qualitygate.wait=true
-            -Dsonar.verbose=true
