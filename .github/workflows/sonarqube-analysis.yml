@@ -45,11 +45,8 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=tech-challenge-cook-api
-            -Dsonar.organization=my-org
             -Dsonar.sources=.
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.exclusions=**/*.tf
             -Dsonar.qualitygate.wait=true
             -Dsonar.verbose=true
