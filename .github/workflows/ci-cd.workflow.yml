@@ -6,11 +6,6 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  ECR_REPOSITORY: tech-challenge-cook-api
-  AWS_REGION: us-east-1
-  IMAGE_TAG: latest
-
 jobs:
   build-and-test:
     name: Build and Test
@@ -35,23 +30,104 @@ jobs:
   build-and-push-ecr:
     name: Build and Push Docker Image to ECR
     runs-on: ubuntu-latest
+    needs: build-and-test
+
+    env:
+      ECR_REPOSITORY: tech-challenge-cook-api
+      AWS_REGION: us-east-1
+      IMAGE_TAG: latest
 
     steps:
       - name: Checkout do Código
         uses: actions/checkout@v4
 
-      - name: Login no AWS ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+      # Passo para verificar e criar o repositório no ECR, caso necessário
+      - name: Create ECR repository if it doesn't exist
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set aws_session_token $AWS_SESSION_TOKEN
+          aws configure set default.region $AWS_REGION
+          aws ecr describe-repositories --repository-name $ECR_REPOSITORY || aws ecr create-repository --repository-name $ECR_REPOSITORY --region $AWS_REGION
 
-      - name: Definir TAG da Imagem
-        run: echo "IMAGE_TAG=$(date +%Y%m%d%H%M%S)-${{ github.sha }}" >> $GITHUB_ENV
+      # Passo para realizar o login no ECR
+      - name: Log in to Amazon ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set aws_session_token $AWS_SESSION_TOKEN
+          aws configure set default.region $AWS_REGION
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com"
 
-      - name: Construir e Taggear a Imagem Docker
+      # Passo para construir a imagem Docker
+      - name: Build Docker image
         run: |
           docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag $ECR_REPOSITORY:$IMAGE_TAG ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Push da Imagem para o Amazon ECR
+      # Passo para marcar a imagem com a tag adequada para o ECR
+      - name: Tag Docker image for ECR
         run: |
-          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG"
+
+      # Passo para fazer o push da imagem Docker para o repositório ECR
+      - name: Push Docker image to Amazon ECR
+        run: |
+          docker push "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG"
+
+  publish-api:
+    name: Terraform Verification and Push API
+    runs-on: ubuntu-latest
+    needs: build-and-push-ecr
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      TF_VAR_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      TF_VAR_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      TF_VAR_AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.7.0
+
+      # Inicializar, validar e aplicar o Terraform para o diretório terraform
+
+      - name: Initialize Terraform for API
+        working-directory: terraform
+        run: terraform init
+
+      - name: Validate Terraform for API
+        working-directory: terraform
+        run: terraform validate
+
+      - name: Plan Terraform for API
+        if: github.ref == 'refs/heads/main' # Executa apenas na branch main
+        working-directory: terraform
+        run: terraform plan -out=tfplan-api
+
+      - name: Apply Terraform for API
+        if: github.ref == 'refs/heads/main' # Executa apenas na branch main
+        working-directory: terraform
+        run: terraform apply -auto-approve tfplan-api
