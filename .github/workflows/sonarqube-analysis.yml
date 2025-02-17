@@ -38,5 +38,5 @@ jobs:
       - name: Executar Análise SonarQube
         uses: SonarSource/sonarqube-scan-action@v2
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: sqa_ce98fb279f74d9abc0e859f3722c3f40ad3871c2
+          SONAR_HOST_URL: http://tech-challenge-alb-919283859.us-east-1.elb.amazonaws.com/sonarqube
