@@ -118,10 +118,6 @@ http://localhost:3000/cook/swagger
 4. Excluir um produto via (DELETE) `/cook/v1/products/{id}`
 5. Consultar os **pedidos** em andamento na cozinha via (GET) `/cook/v1/orders`
 
-## 🎲 Seeds
-
-Este projeto utiliza **seeds** para pré-popular o banco de dados. O **Flyway** gerencia essas migrações automaticamente ao iniciar a aplicação.
-
 ## 📚 Event Storming
 
 ![Event Storming](./assets/event_storming.png)
