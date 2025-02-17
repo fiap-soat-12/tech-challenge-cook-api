@@ -27,6 +27,43 @@ jobs:
       - name: Rodar Testes Unitários
         run: npm test
 
+  sonar:
+    name: Análise SonarQube
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar Dependências
+        run: npm ci
+
+      - name: Rodar Testes e Gerar Cobertura
+        run: npm test -- --coverage
+
+      - name: Upload dos Relatórios de Cobertura
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobertura-teste
+          path: ./coverage
+
+      - name: Testar Conexão com SonarQube
+        run: curl -I $SONAR_HOST_URL
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: Executar Análise SonarQube
+        uses: SonarSource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
   build-and-push-ecr:
     name: Build and Push Docker Image to ECR
     runs-on: ubuntu-latest
