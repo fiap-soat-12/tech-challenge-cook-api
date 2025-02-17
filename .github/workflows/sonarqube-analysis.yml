@@ -33,7 +33,7 @@ jobs:
       - name: Testar Conexão com SonarQube
         run: curl -I $SONAR_HOST_URL
         env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: http://tech-challenge-alb-919283859.us-east-1.elb.amazonaws.com/sonarqube
 
       - name: Executar Análise SonarQube
         uses: SonarSource/sonarqube-scan-action@v2
