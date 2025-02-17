@@ -64,7 +64,7 @@ describe('DatabaseInitService', () => {
 
     await service['runMigrations']();
 
-    expect(mockDb.query).toHaveBeenCalledTimes(3);
+    expect(mockDb.query).toHaveBeenCalledTimes(4);
     expect(mockLogger.log).toHaveBeenCalledWith(
       'Migração V1 executada com sucesso!',
     );
