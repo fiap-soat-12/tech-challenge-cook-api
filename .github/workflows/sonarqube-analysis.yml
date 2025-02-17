@@ -30,7 +30,7 @@ jobs:
 
       # 5. Upload dos Relatórios de Teste
       - name: Upload dos Relatórios de Cobertura
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cobertura-teste
           path: ./coverage
