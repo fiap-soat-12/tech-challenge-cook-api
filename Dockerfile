@@ -8,7 +8,7 @@ RUN npm ci --only=production
 
 COPY . .
 
-RUN npm run build
+RUN npx nest build
 
 FROM node:20-alpine
 
