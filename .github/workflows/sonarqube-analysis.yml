@@ -17,8 +17,9 @@ jobs:
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Atualizado para ser compatível com seu projeto
+          node-version: '20' # Compatível com seu projeto
           cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       # 3. Instalar dependências
       - name: Instalar Dependências
@@ -35,22 +36,20 @@ jobs:
           name: cobertura-teste
           path: ./coverage
 
-      # 6. Instalar SonarQube Scanner
-      - name: Instalar SonarQube Scanner
-        run: npm install -g sonarqube-scanner
-
-      # 7. Executar Análise SonarQube
+      # 6. Executar Análise SonarQube
       - name: Executar Análise SonarQube
+        uses: SonarSource/sonarqube-scan-action@v2
         env:
-          SONAR_PROJECT_KEY: tech-challenge-cook-api
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} # Altere para seu servidor se for auto-hospedado
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} \
-            -Dsonar.organization=my-org \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
-            -Dsonar.login=${{ env.SONAR_TOKEN }} \
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-            -Dsonar.qualitygate.wait=true # Garante que falhe caso o Quality Gate não passe
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=tech-challenge-cook-api
+            -Dsonar.organization=my-org
+            -Dsonar.sources=.
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.exclusions=**/*.tf
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.verbose=true
