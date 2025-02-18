@@ -100,7 +100,7 @@ docker compose up
   6. Executar o comando `terraform plan` para executar o planejamento da execução/implementação;
   7. Executar o comando `terraform apply` para criar a Cook API;
   8. Após a execução do Terraform finalizar, verificar se a Cook API subiu corretamente na AWS;
-  ![aws-resource](./assets/aws-resource.png)
+  ![lambda-auth-aws-image]()
 
 ## 📄 Documentação da API
 
@@ -117,6 +117,16 @@ http://localhost:3000/cook/swagger
 3. Atualizar um produto via (PUT) `/cook/v1/products/{id}`
 4. Excluir um produto via (DELETE) `/cook/v1/products/{id}`
 5. Consultar os **pedidos** em andamento na cozinha via (GET) `/cook/v1/orders`
+
+## ✅ Cobertura de Testes
+
+### Testes Unitarios
+![unit-test](./assets/unit_test_cook_1.png)
+![unit-test](./assets/unit_test_cook_2.png)
+
+### Scan do Sonar
+![Sonar_1](./assets/sonar_cook_1.png)
+![Sonar_2](./assets/sonar_cook_2.png)
 
 ## 📚 Event Storming
 
