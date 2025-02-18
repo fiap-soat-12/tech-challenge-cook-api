@@ -26,6 +26,7 @@ export class DatabaseInitService implements OnModuleInit {
       { version: 'V1', file: 'V1__CREATE_COOK_ORDER_TABLE.sql' },
       { version: 'V2', file: 'V2__CREATE_PRODUCT_TABLE.sql' },
       { version: 'V3', file: 'V3__ORDER_PRODUCT_TABLE.sql' },
+      { version: 'V4', file: 'V4__CREATE_PRODUCT_SEED_BDD.sql' },
     ];
 
     for (const migration of migrations) {

@@ -10,8 +10,8 @@ import {
 @ApiTags('Health Check')
 export class HealthCheckController {
   constructor(
-    private health: HealthCheckService,
-    private http: HttpHealthIndicator,
+    private readonly health: HealthCheckService,
+    private readonly http: HttpHealthIndicator,
   ) {}
 
   @Get()

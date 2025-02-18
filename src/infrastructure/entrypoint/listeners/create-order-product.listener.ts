@@ -2,7 +2,7 @@ import { CreateOrderDto } from '@application/dto/create-order.dto';
 import { Logger } from '@application/interfaces/logger.interface';
 import { CreateOrderProductUseCase } from '@application/usecases/order/create-order/create-order.usecase';
 import { SqsClient } from '@infrastructure/config/sqs-config/sqs.config';
-import { SqsListener } from '@infrastructure/config/sqs-config/sqs.listener';
+import { SqsListener } from '@infrastructure/config/sqs-config/sqs-listener.config';
 import { OnModuleInit } from '@nestjs/common';
 
 export class CreateOrderProductListener

@@ -11,13 +11,13 @@ resource "kubernetes_secret" "cook_secret" {
   }
 
   data = {
-    aws_access_key_id = var.AWS_ACCESS_KEY_ID
+    aws_access_key_id     = var.AWS_ACCESS_KEY_ID
     aws_secret_access_key = var.AWS_SECRET_ACCESS_KEY
-    aws_session_token = var.AWS_SESSION_TOKEN
-    db_name = var.rds_instance_name
-    db_user = local.db_credentials.username
-    db_password = local.db_credentials.password
-    db_url = data.aws_ssm_parameter.db_url.value
+    aws_session_token     = var.AWS_SESSION_TOKEN
+    db_name               = var.rds_instance_name
+    db_user               = local.db_credentials.username
+    db_password           = local.db_credentials.password
+    db_url                = data.aws_ssm_parameter.db_url.value
   }
 
   type = "Opaque"
@@ -52,8 +52,7 @@ resource "kubernetes_deployment" "cook_deployment" {
 
       spec {
         container {
-        # image             = data.aws_ecr_image.latest_image.image_uri
-          image             = "diguya/tech-challenge-cook-api:latest"
+          image             = data.aws_ecr_image.latest_image.image_uri
           name              = "tech-challenge-cook-api"
           image_pull_policy = "Always"
 
@@ -96,7 +95,7 @@ resource "kubernetes_deployment" "cook_deployment" {
           }
 
           env {
-            name  = "DB_USER"
+            name = "DB_USER"
             value_from {
               secret_key_ref {
                 name = "tech-challenge-cook-secret"
@@ -106,7 +105,7 @@ resource "kubernetes_deployment" "cook_deployment" {
           }
 
           env {
-            name  = "DB_HOST"
+            name = "DB_HOST"
             value_from {
               secret_key_ref {
                 name = "tech-challenge-cook-secret"
@@ -116,7 +115,7 @@ resource "kubernetes_deployment" "cook_deployment" {
           }
 
           env {
-            name  = "DB_NAME"
+            name = "DB_NAME"
             value_from {
               secret_key_ref {
                 name = "tech-challenge-cook-secret"
@@ -126,7 +125,7 @@ resource "kubernetes_deployment" "cook_deployment" {
           }
 
           env {
-            name  = "DB_PASSWORD"
+            name = "DB_PASSWORD"
             value_from {
               secret_key_ref {
                 name = "tech-challenge-cook-secret"
@@ -201,7 +200,7 @@ resource "kubernetes_deployment" "cook_deployment" {
           }
 
           env {
-            name = "AWS_REGION"
+            name  = "AWS_REGION"
             value = "us-east-1"
           }
         }

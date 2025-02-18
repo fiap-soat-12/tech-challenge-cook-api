@@ -1,7 +1,7 @@
 name: SonarQube NodeJS Analysis
 
 on:
-  workflow_dispatch: # Permite execução manual
+  workflow_dispatch:
 
 jobs:
   sonar:
@@ -9,48 +9,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout do código
       - name: Checkout do Código
         uses: actions/checkout@v4
 
-      # 2. Configurar Node.js e Cache
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Atualizado para ser compatível com seu projeto
+          node-version: '20'
           cache: 'npm'
 
-      # 3. Instalar dependências
       - name: Instalar Dependências
         run: npm ci
 
-      # 4. Executar testes e gerar cobertura
       - name: Rodar Testes e Gerar Cobertura
         run: npm test -- --coverage
 
-      # 5. Upload dos Relatórios de Teste
       - name: Upload dos Relatórios de Cobertura
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cobertura-teste
           path: ./coverage
 
-      # 6. Instalar SonarQube Scanner
-      - name: Instalar SonarQube Scanner
-        run: npm install -g sonarqube-scanner
+      - name: Testar Conexão com SonarQube
+        run: curl -I $SONAR_HOST_URL
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      # 7. Executar Análise SonarQube
       - name: Executar Análise SonarQube
+        uses: SonarSource/sonarqube-scan-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: 'https://sonarcloud.io' # Altere para seu servidor se for auto-hospedado
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=tech-challenge-cook-api \
-            -Dsonar.organization=my-org \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_TOKEN \
-            -Dsonar.coverage.exclusions=**/node_modules/**,**/test/** \
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-            -Dsonar.qualitygate.wait=true # Garante que falhe caso o Quality Gate não passe
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
