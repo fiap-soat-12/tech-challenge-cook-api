@@ -121,7 +121,8 @@ http://localhost:3000/cook/swagger
 ## ✅ Cobertura de Testes
 
 ### Testes Unitarios
-![unit-test](./assets/unit_test_cook.png)
+![unit-test](./assets/unit_test_cook_1.png)
+![unit-test](./assets/unit_test_cook_2.png)
 
 ### Scan do Sonar
 ![Sonar_1](./assets/sonar_cook_1.png)
