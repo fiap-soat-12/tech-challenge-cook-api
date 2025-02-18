@@ -118,9 +118,14 @@ http://localhost:3000/cook/swagger
 4. Excluir um produto via (DELETE) `/cook/v1/products/{id}`
 5. Consultar os **pedidos** em andamento na cozinha via (GET) `/cook/v1/orders`
 
-## 🎲 Seeds
+## ✅ Cobertura de Testes
 
-Este projeto utiliza **seeds** para pré-popular o banco de dados. O **Flyway** gerencia essas migrações automaticamente ao iniciar a aplicação.
+### Testes Unitarios
+![unit-test](./assets/unit_test_cook.png)
+
+### Scan do Sonar
+![Sonar_1](./assets/sonar_cook_1.png)
+![Sonar_2](./assets/sonar_cook_2.png)
 
 ## 📚 Event Storming
 
