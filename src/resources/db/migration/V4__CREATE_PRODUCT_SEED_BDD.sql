@@ -1,5 +1,5 @@
 INSERT INTO PRODUCT (ID, NAME, CATEGORY, PRICE, DESCRIPTION, STATUS, CREATED_AT, UPDATED_AT)
-SELECT 'bf00ac4a-dd15-4693-8dde-a20e8babf993', 'Hamburguer de Queijo', 'MAIN_DISH', 19.99,
+SELECT 'bf00ac4a-dd15-4693-8dde-a20e8babf993', 'Hamburguer de Queijo', 'MAIN_COURSE', 19.99,
        'Um delicioso hamburguer', 'ACTIVE', NOW(), NOW()
 WHERE NOT EXISTS (
     SELECT 1 FROM PRODUCT WHERE ID = 'bf00ac4a-dd15-4693-8dde-a20e8babf993'
